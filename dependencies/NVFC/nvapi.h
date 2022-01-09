@@ -6,6 +6,7 @@
 typedef int32_t NV_S32;
 typedef uint32_t NV_U32;
 typedef uint8_t NV_U8;
+typedef uint16_t NV_U16;
 
 typedef NV_S32* NV_HANDLE;
 typedef NV_HANDLE NV_PHYSICAL_GPU_HANDLE;
@@ -308,6 +309,132 @@ struct NV_I2C_INFO_V3 {
 	NV_U32 is_port_id_set;
 };
 
+// NvAPI RGB related stuff, if you start at NV_GPU_CLIENT_ILLUM_ZONE_CONTROL_PARAMS 
+// and read upwards, it will make more sense (CMiller)
+struct NV_GPU_CLIENT_ILLUM_ZONE_CONTROL_DATA_MANUAL_COLOR_FIXED
+{
+    NV_GPU_CLIENT_ILLUM_ZONE_CONTROL_DATA_MANUAL_COLOR_FIXED_PARAMS colorFixedParams;
+};
+
+struct NV_GPU_CLIENT_ILLUM_ZONE_CONTROL_DATA_COLOR_FIXED
+{
+    union
+    {
+        NV_GPU_CLIENT_ILLUM_ZONE_CONTROL_DATA_MANUAL_COLOR_FIXED           manualColorFixed;
+        NV_GPU_CLIENT_ILLUM_ZONE_CONTROL_DATA_PIECEWISE_LINEAR_COLOR_FIXED piecewiseLinearColorFixed;
+        NV_U8                                         rsvd[64];
+    } data;
+    NV_U8    rsvd[64];
+};
+
+struct NV_GPU_CLIENT_ILLUM_ZONE_CONTROL_DATA_MANUAL_COLOR_FIXED_PARAMS
+{
+    NV_U8 brightnessPct;
+};
+
+#define NV_GPU_CLIENT_ILLUM_CTRL_MODE_PIECEWISE_LINEAR_COLOR_ENDPOINTS           2
+struct NV_GPU_CLIENT_ILLUM_ZONE_CONTROL_DATA_PIECEWISE_LINEAR_COLOR_FIXED
+{
+    NV_GPU_CLIENT_ILLUM_ZONE_CONTROL_DATA_MANUAL_COLOR_FIXED_PARAMS colorFixedParams[NV_GPU_CLIENT_ILLUM_CTRL_MODE_PIECEWISE_LINEAR_COLOR_ENDPOINTS];
+    NV_GPU_CLIENT_ILLUM_ZONE_CONTROL_DATA_PIECEWISE_LINEAR          piecewiseLinearData;
+};
+
+struct NV_GPU_CLIENT_ILLUM_ZONE_CONTROL_DATA_PIECEWISE_LINEAR_RGB
+{
+    NV_GPU_CLIENT_ILLUM_ZONE_CONTROL_DATA_MANUAL_RGB_PARAMS rgbParams[NV_GPU_CLIENT_ILLUM_CTRL_MODE_PIECEWISE_LINEAR_COLOR_ENDPOINTS];
+    NV_GPU_CLIENT_ILLUM_ZONE_CONTROL_DATA_PIECEWISE_LINEAR  piecewiseLinearData;
+};
+
+enum NV_GPU_CLIENT_ILLUM_PIECEWISE_LINEAR_CYCLE_TYPE
+{
+    NV_GPU_CLIENT_ILLUM_PIECEWISE_LINEAR_CYCLE_HALF_HALT = 0,
+    NV_GPU_CLIENT_ILLUM_PIECEWISE_LINEAR_CYCLE_FULL_HALT,
+    NV_GPU_CLIENT_ILLUM_PIECEWISE_LINEAR_CYCLE_FULL_REPEAT,
+    NV_GPU_CLIENT_ILLUM_PIECEWISE_LINEAR_CYCLE_INVALID = 0xFF,
+};
+
+struct NV_GPU_CLIENT_ILLUM_ZONE_CONTROL_DATA_PIECEWISE_LINEAR
+{
+    NV_GPU_CLIENT_ILLUM_PIECEWISE_LINEAR_CYCLE_TYPE    cycleType;
+    NV_U8    grpCount;
+    NV_U16   riseTimems;
+    NV_U16   fallTimems;
+    NV_U16   ATimems;
+    NV_U16   BTimems;
+    NV_U16   grpIdleTimems;
+    NV_U16   phaseOffsetms;
+};
+
+struct NV_GPU_CLIENT_ILLUM_ZONE_CONTROL_DATA_MANUAL_RGB_PARAMS
+{
+    NV_U8 colorR;
+    NV_U8 colorG;
+    NV_U8 colorB;
+    NV_U8 brightnessPct;
+};
+
+struct NV_GPU_CLIENT_ILLUM_ZONE_CONTROL_DATA_MANUAL_RGB
+{
+    NV_GPU_CLIENT_ILLUM_ZONE_CONTROL_DATA_MANUAL_RGB_PARAMS rgbParams;
+};
+
+struct NV_GPU_CLIENT_ILLUM_ZONE_CONTROL_DATA_RGB
+{
+    union
+    {
+        NV_GPU_CLIENT_ILLUM_ZONE_CONTROL_DATA_MANUAL_RGB            manualRGB;
+        NV_GPU_CLIENT_ILLUM_ZONE_CONTROL_DATA_PIECEWISE_LINEAR_RGB  piecewiseLinearRGB;
+        NV_U8                                         rsvd[64];
+    } data;
+    NV_U8    rsvd[64];
+};
+
+enum NV_GPU_CLIENT_ILLUM_CTRL_MODE
+{
+    NV_GPU_CLIENT_ILLUM_CTRL_MODE_MANUAL_RGB = 0,
+    NV_GPU_CLIENT_ILLUM_CTRL_MODE_PIECEWISE_LINEAR_RGB,
+
+    // Only add new control modes above this.
+    NV_GPU_CLIENT_ILLUM_CTRL_MODE_INVALID = 0xFF,
+};
+
+enum NV_GPU_CLIENT_ILLUM_ZONE_TYPE
+{
+    NV_GPU_CLIENT_ILLUM_ZONE_TYPE_INVALID = 0,
+    NV_GPU_CLIENT_ILLUM_ZONE_TYPE_RGB,
+    NV_GPU_CLIENT_ILLUM_ZONE_TYPE_COLOR_FIXED,
+};
+
+struct NV_GPU_CLIENT_ILLUM_ZONE_CONTROL_V1
+{
+    NV_GPU_CLIENT_ILLUM_ZONE_TYPE  type;
+    NV_GPU_CLIENT_ILLUM_CTRL_MODE  ctrlMode;
+    union
+    {
+        NV_GPU_CLIENT_ILLUM_ZONE_CONTROL_DATA_RGB           rgb;
+        NV_GPU_CLIENT_ILLUM_ZONE_CONTROL_DATA_COLOR_FIXED   colorFixed;
+        NV_U8                                                rsvd[64];
+    } data;
+    NV_U8    rsvd[64];
+};
+
+#define NV_GPU_CLIENT_ILLUM_ZONE_NUM_ZONES_MAX 32
+struct NV_GPU_CLIENT_ILLUM_ZONE_CONTROL_PARAMS {
+
+    NV_U32 version;
+ 
+    NV_U32 bDefault : 1;
+    NV_U32 rsvdField : 31;
+
+    NV_U32 numIllumZonesControl;
+
+    NV_U8 rsvd[64];
+  
+    NV_GPU_CLIENT_ILLUM_ZONE_CONTROL_V1 zones[NV_GPU_CLIENT_ILLUM_ZONE_NUM_ZONES_MAX];
+
+};
+
+
 // Interface: 0150E828
 NV_STATUS NvAPI_Initialize();
 
@@ -462,4 +589,15 @@ NV_STATUS NvAPI_I2CReadEx(
 	NV_PHYSICAL_GPU_HANDLE physical_gpu_handle,
 	NV_I2C_INFO_V3* i2c_info,
 	NV_U32 *unknown);
+
+// Interface: 73C01D58
+NV_STATUS NvAPI_GPU_ClientIllumZonesGetControl(
+    __in NV_PHYSICAL_GPU_HANDLE physical_gpu_handle,
+    __inout NV_GPU_CLIENT_ILLUM_ZONE_CONTROL_PARAMS* pIllumZonesControl);
+
+// Interface: 57024C62
+NV_STATUS NvAPI_GPU_ClientIllumZonesSetControl(
+    __in NV_PHYSICAL_GPU_HANDLE physical_gpu_handle,
+    __inout NV_GPU_CLIENT_ILLUM_ZONE_CONTROL_PARAMS* pIllumZonesControl);
+
 #endif
