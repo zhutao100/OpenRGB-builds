@@ -299,6 +299,8 @@ static void QueryInterfaces(FARPROC query_interface)
 
 	QueryInterface(query_interface, 0x283AC65A, NvAPI_I2CWriteEx);
 	QueryInterface(query_interface, 0x4D7B0709, NvAPI_I2CReadEx);
+	QueryInterface(query_interface, 0x3DBF5764, NvAPI_GPU_ClientIllumZonesGetControl);
+	QueryInterface(query_interface, 0x197D065E, NvAPI_GPU_ClientIllumZonesGetControl);
 }
 
 NV_STATUS NvAPI_Initialize()
