@@ -159,6 +159,24 @@ s32 i2c_smbus_nvapi::i2c_xfer(u8 addr, char read_write, int* size, u8* data)
     return(ret);
 }
 
+// TODO: Hack this up to have the Get/Set control calls, include this file directly into NVIDIA Illumination Controller
+s32 i2c_smbus_nvapi::nvapi_xfer(char nvapi_call, NV_GPU_CLIENT_ILLUM_ZONE_CONTROL_PARAMS* zone_control_struct)
+{
+    NV_STATUS ret;
+
+    // Perform read or write
+    if(nvapi_call == NVAPI_ZONE_SET_CONTROL)
+    {
+        ret = NvAPI_GPU_ClientIllumZonesSetControl(handle, zone_control_struct);
+    }
+    else if(nvapi_call == NVAPI_ZONE_GET_CONTROL)
+    {
+        ret = NvAPI_GPU_ClientIllumZonesGetControl(handle, zone_control_struct);
+    }
+
+    return(ret);
+}
+
 #include "Detector.h"
 
 bool i2c_smbus_nvapi_detect()
