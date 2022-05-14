@@ -15,6 +15,7 @@
 #include <thread>
 #include <condition_variable>
 #include <mutex>
+#include <nvapi.h>
 
 typedef unsigned char   u8;
 typedef unsigned short  u16;

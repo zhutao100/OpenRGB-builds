@@ -137,6 +137,7 @@ INCLUDEPATH +=                                                                  
     Controllers/MSIRGBController/                                                               \
     Controllers/MSIVigorController/                                                             \
     Controllers/NanoleafController/                                                             \
+    Controllers/NVIDIAFoundersController/                                                       \
     Controllers/NZXTHue2Controller/                                                             \
     Controllers/NZXTHuePlusController/                                                          \
     Controllers/NZXTKrakenController/                                                           \
@@ -468,6 +469,8 @@ HEADERS +=                                                                      
     Controllers/NvidiaESAController/NvidiaESAController.h                                       \
     Controllers/NanoleafController/RGBController_Nanoleaf.h                                     \
     Controllers/NvidiaESAController/RGBController_NvidiaESA.h                                   \
+    Controllers/NVIDIAFoundersController/NVIDIAFoundersV1Controller.h                           \
+    Controllers/NVIDIAFoundersController/RGBController_NVIDIAFounders.h                         \
     Controllers/NZXTHue2Controller/NZXTHue2Controller.h                                         \
     Controllers/NZXTHue2Controller/RGBController_NZXTHue2.h                                     \
     Controllers/NZXTHuePlusController/NZXTHuePlusController.h                                   \
@@ -976,6 +979,9 @@ SOURCES +=                                                                      
     Controllers/NvidiaESAController/NvidiaESAController.cpp                                     \
     Controllers/NvidiaESAController/NvidiaESAControllerDetect.cpp                               \
     Controllers/NvidiaESAController/RGBController_NvidiaESA.cpp                                 \
+    Controllers/NVIDIAFoundersController/NVIDIAFoundersV1Controller.cpp                         \
+    Controllers/NVIDIAFoundersController/NVIDIAFoundersControllerDetect.cpp                     \
+    Controllers/NVIDIAFoundersController/RGBController_NVIDIAFounders.cpp                       \
     Controllers/NZXTHue2Controller/NZXTHue2Controller.cpp                                       \
     Controllers/NZXTHue2Controller/NZXTHue2ControllerDetect.cpp                                 \
     Controllers/NZXTHue2Controller/RGBController_NZXTHue2.cpp                                   \
