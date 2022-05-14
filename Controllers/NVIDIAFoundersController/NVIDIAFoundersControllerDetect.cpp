@@ -29,7 +29,7 @@ typedef struct
 
 static const gpu_pci_device device_list[] =
 {
-    {NVIDIA_VEN,   NVIDIA_RTX3080_DEV,         NVIDIA_SUB_VEN,   NVIDIA_RTX3080_FE_NON_LHR_SUB_DEV,         NVIDIA_FOUNDERS_V1,    "3080FE Non-LHR"},
+    {NVIDIA_VEN,   NVIDIA_RTX3080_DEV,         NVIDIA_VEN,   NVIDIA_RTX3080_FE_NON_LHR_SUB_DEV,         NVIDIA_FOUNDERS_V1,    "3080FE Non-LHR"},
 
 };
 /******************************************************************************************\
@@ -65,10 +65,11 @@ void DetectNVIDIAFOUNDERSGPUControllers(std::vector<i2c_smbus_interface*>& busse
                         {
                             LOG_DEBUG(GPU_DETECT_MESSAGE, NVIDIA_FOUNDERS_V1_CONTROLLER_NAME, bus, device_list[dev_idx].pci_device, device_list[dev_idx].pci_subsystem_device, device_list[dev_idx].name );
                             NVIDIAFoundersV1Controller*     new_controller;
-                            RGBController_NVIDIA_FOUNDERS_V1* new_rgbcontroller;
+                            RGBController_NVIDIAFoundersV1* new_rgbcontroller;
 
-                            new_controller          = new NVIDIA_FOUNDERS_V1_Controller(busses[bus], 0x49);
-                            new_rgbcontroller       = new RGBController_NVIDIA_FOUNDERS_V1(new_controller);
+                            // TODO: Slap a QueryIllumSupport if statement around this
+                            new_controller          = new NVIDIAFoundersV1Controller(busses[bus]);
+                            new_rgbcontroller       = new RGBController_NVIDIAFoundersV1(new_controller);
                             new_rgbcontroller->name = device_list[dev_idx].name;
                             ResourceManager::get()->RegisterRGBController(new_rgbcontroller);
                         }

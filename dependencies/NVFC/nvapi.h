@@ -309,103 +309,326 @@ struct NV_I2C_INFO_V3 {
 	NV_U32 is_port_id_set;
 };
 
-// NvAPI RGB related stuff, if you start at NV_GPU_CLIENT_ILLUM_ZONE_CONTROL_PARAMS 
-// and read upwards, it will make more sense (CMiller)
-struct NV_GPU_CLIENT_ILLUM_ZONE_CONTROL_DATA_MANUAL_COLOR_FIXED
-{
-    NV_GPU_CLIENT_ILLUM_ZONE_CONTROL_DATA_MANUAL_COLOR_FIXED_PARAMS colorFixedParams;
-};
+// NvAPI RGB related stuff (CMiller)
 
-struct NV_GPU_CLIENT_ILLUM_ZONE_CONTROL_DATA_COLOR_FIXED
+typedef enum
 {
-    union
-    {
-        NV_GPU_CLIENT_ILLUM_ZONE_CONTROL_DATA_MANUAL_COLOR_FIXED           manualColorFixed;
-        NV_GPU_CLIENT_ILLUM_ZONE_CONTROL_DATA_PIECEWISE_LINEAR_COLOR_FIXED piecewiseLinearColorFixed;
-        NV_U8                                         rsvd[64];
-    } data;
-    NV_U8    rsvd[64];
-};
+    NV_GPU_CLIENT_ILLUM_ZONE_TYPE_INVALID = 0,
+    NV_GPU_CLIENT_ILLUM_ZONE_TYPE_RGB,
+    NV_GPU_CLIENT_ILLUM_ZONE_TYPE_COLOR_FIXED,
+} NV_GPU_CLIENT_ILLUM_ZONE_TYPE;
 
-struct NV_GPU_CLIENT_ILLUM_ZONE_CONTROL_DATA_MANUAL_COLOR_FIXED_PARAMS
+
+typedef enum
 {
-    NV_U8 brightnessPct;
-};
+    NV_GPU_CLIENT_ILLUM_ZONE_LOCATION_GPU_TOP_0 = 0x00,
+    NV_GPU_CLIENT_ILLUM_ZONE_LOCATION_SLI_TOP_0 = 0x20,
+    NV_GPU_CLIENT_ILLUM_ZONE_LOCATION_INVALID   = 0xFFFFFFFF,
+} NV_GPU_CLIENT_ILLUM_ZONE_LOCATION;
 
-#define NV_GPU_CLIENT_ILLUM_CTRL_MODE_PIECEWISE_LINEAR_COLOR_ENDPOINTS           2
-struct NV_GPU_CLIENT_ILLUM_ZONE_CONTROL_DATA_PIECEWISE_LINEAR_COLOR_FIXED
-{
-    NV_GPU_CLIENT_ILLUM_ZONE_CONTROL_DATA_MANUAL_COLOR_FIXED_PARAMS colorFixedParams[NV_GPU_CLIENT_ILLUM_CTRL_MODE_PIECEWISE_LINEAR_COLOR_ENDPOINTS];
-    NV_GPU_CLIENT_ILLUM_ZONE_CONTROL_DATA_PIECEWISE_LINEAR          piecewiseLinearData;
-};
 
-struct NV_GPU_CLIENT_ILLUM_ZONE_CONTROL_DATA_PIECEWISE_LINEAR_RGB
-{
-    NV_GPU_CLIENT_ILLUM_ZONE_CONTROL_DATA_MANUAL_RGB_PARAMS rgbParams[NV_GPU_CLIENT_ILLUM_CTRL_MODE_PIECEWISE_LINEAR_COLOR_ENDPOINTS];
-    NV_GPU_CLIENT_ILLUM_ZONE_CONTROL_DATA_PIECEWISE_LINEAR  piecewiseLinearData;
-};
-
-enum NV_GPU_CLIENT_ILLUM_PIECEWISE_LINEAR_CYCLE_TYPE
+typedef enum
 {
     NV_GPU_CLIENT_ILLUM_PIECEWISE_LINEAR_CYCLE_HALF_HALT = 0,
     NV_GPU_CLIENT_ILLUM_PIECEWISE_LINEAR_CYCLE_FULL_HALT,
     NV_GPU_CLIENT_ILLUM_PIECEWISE_LINEAR_CYCLE_FULL_REPEAT,
     NV_GPU_CLIENT_ILLUM_PIECEWISE_LINEAR_CYCLE_INVALID = 0xFF,
-};
+} NV_GPU_CLIENT_ILLUM_PIECEWISE_LINEAR_CYCLE_TYPE;
 
-struct NV_GPU_CLIENT_ILLUM_ZONE_CONTROL_DATA_PIECEWISE_LINEAR
-{
-    NV_GPU_CLIENT_ILLUM_PIECEWISE_LINEAR_CYCLE_TYPE    cycleType;
-    NV_U8    grpCount;
-    NV_U16   riseTimems;
-    NV_U16   fallTimems;
-    NV_U16   ATimems;
-    NV_U16   BTimems;
-    NV_U16   grpIdleTimems;
-    NV_U16   phaseOffsetms;
-};
-
-struct NV_GPU_CLIENT_ILLUM_ZONE_CONTROL_DATA_MANUAL_RGB_PARAMS
-{
-    NV_U8 colorR;
-    NV_U8 colorG;
-    NV_U8 colorB;
-    NV_U8 brightnessPct;
-};
-
-struct NV_GPU_CLIENT_ILLUM_ZONE_CONTROL_DATA_MANUAL_RGB
-{
-    NV_GPU_CLIENT_ILLUM_ZONE_CONTROL_DATA_MANUAL_RGB_PARAMS rgbParams;
-};
-
-struct NV_GPU_CLIENT_ILLUM_ZONE_CONTROL_DATA_RGB
-{
-    union
-    {
-        NV_GPU_CLIENT_ILLUM_ZONE_CONTROL_DATA_MANUAL_RGB            manualRGB;
-        NV_GPU_CLIENT_ILLUM_ZONE_CONTROL_DATA_PIECEWISE_LINEAR_RGB  piecewiseLinearRGB;
-        NV_U8                                         rsvd[64];
-    } data;
-    NV_U8    rsvd[64];
-};
-
-enum NV_GPU_CLIENT_ILLUM_CTRL_MODE
+typedef enum
 {
     NV_GPU_CLIENT_ILLUM_CTRL_MODE_MANUAL_RGB = 0,
     NV_GPU_CLIENT_ILLUM_CTRL_MODE_PIECEWISE_LINEAR_RGB,
 
-    // Only add new control modes above this.
+    // Strictly add new control modes above this.
     NV_GPU_CLIENT_ILLUM_CTRL_MODE_INVALID = 0xFF,
-};
+} NV_GPU_CLIENT_ILLUM_CTRL_MODE;
 
-enum NV_GPU_CLIENT_ILLUM_ZONE_TYPE
+
+#define NV_GPU_CLIENT_ILLUM_ZONE_NUM_ZONES_MAX 32
+
+typedef struct _NV_GPU_CLIENT_ILLUM_ZONE_INFO_DATA_RGB
 {
-    NV_GPU_CLIENT_ILLUM_ZONE_TYPE_INVALID = 0,
-    NV_GPU_CLIENT_ILLUM_ZONE_TYPE_RGB,
-    NV_GPU_CLIENT_ILLUM_ZONE_TYPE_COLOR_FIXED,
-};
+    NV_U8 rsvd;
+} NV_GPU_CLIENT_ILLUM_ZONE_INFO_DATA_RGB;
 
-struct NV_GPU_CLIENT_ILLUM_ZONE_CONTROL_V1
+typedef struct _NV_GPU_CLIENT_ILLUM_ZONE_INFO_V1
+{
+    NV_GPU_CLIENT_ILLUM_ZONE_TYPE      type;
+
+    /*!
+     * Index pointing to an Illumination Device that controls this zone.
+     */
+    NV_U8                               illumDeviceIdx;
+
+    /*!
+     * Provider index for representing logical to physical zone mapping.
+     */
+    NV_U8                                provIdx;
+
+    /*!
+     * Location of the zone on the board.
+     */
+    NV_GPU_CLIENT_ILLUM_ZONE_LOCATION  zoneLocation;
+
+    union
+    {
+        //
+        // Need to be careful when add/expanding types in this union. If any type
+        // exceeds sizeof(rsvd) then rsvd has failed its purpose.
+        //
+        NV_GPU_CLIENT_ILLUM_ZONE_INFO_DATA_RGB    rgb;
+        /*!
+         * Reserved bytes for possible future extension of this struct.
+         */
+        NV_U8                                      rsvd[64];
+    } data;
+
+    NV_U8    rsvd[64];
+} NV_GPU_CLIENT_ILLUM_ZONE_INFO_V1;
+
+typedef struct _NV_GPU_CLIENT_ILLUM_ZONE_INFO_PARAMS_V1
+{
+    /*!
+     * Version of structure. Must always be first member.
+     */
+    NV_U32   version;
+
+    /*!
+     * Number of illumination zones present.
+     */
+    NV_U32   numIllumZones;
+
+    /*!
+     * Reserved bytes for possible future extension of this struct.
+     */
+    NV_U8    rsvd[64];
+    NV_GPU_CLIENT_ILLUM_ZONE_INFO_V1 zones[NV_GPU_CLIENT_ILLUM_ZONE_NUM_ZONES_MAX];
+} NV_GPU_CLIENT_ILLUM_ZONE_INFO_PARAMS_V1;
+
+#define NV_GPU_CLIENT_ILLUM_ZONE_INFO_PARAMS_VER_1 MAKE_NVAPI_VERSION(NV_GPU_CLIENT_ILLUM_ZONE_INFO_PARAMS_V1, 1)
+#define NV_GPU_CLIENT_ILLUM_ZONE_INFO_PARAMS_VER   NV_GPU_CLIENT_ILLUM_ZONE_INFO_PARAMS_VER_1
+typedef NV_GPU_CLIENT_ILLUM_ZONE_INFO_PARAMS_V1    NV_GPU_CLIENT_ILLUM_ZONE_INFO_PARAMS;
+
+
+
+
+/*!
+ * Used in \ref NV_GPU_CLIENT_ILLUM_ZONE_CONTROL_DATA_MANUAL_RGB
+ * Parameters required to represent control mode of type
+ * \ref NV_GPU_CLIENT_ILLUM_CTRL_MODE_MANUAL_RGB.
+ */
+typedef struct _NV_GPU_CLIENT_ILLUM_ZONE_CONTROL_DATA_MANUAL_RGB_PARAMS
+{
+    /*!
+     * Red compenent of color applied to the zone.
+     */
+    NV_U8 colorR;
+
+    /*!
+     * Green compenent of color applied to the zone.
+     */
+    NV_U8 colorG;
+
+    /*!
+     * Blue compenent of color applied to the zone.
+     */
+    NV_U8 colorB;
+
+    /*!
+     * Brightness perecentage value of the zone.
+     */
+    NV_U8 brightnessPct;
+} NV_GPU_CLIENT_ILLUM_ZONE_CONTROL_DATA_MANUAL_RGB_PARAMS;
+
+/*!
+ * Used in \ref NV_GPU_CLIENT_ILLUM_ZONE_CONTROL_DATA_RGB
+ * Data required to represent control mode of type
+ * \ref NV_GPU_CLIENT_ILLUM_CTRL_MODE_MANUAL_RGB.
+ */
+typedef struct _NV_GPU_CLIENT_ILLUM_ZONE_CONTROL_DATA_MANUAL_RGB
+{
+    /*!
+     * Parameters required to represent control mode of type
+     * \ref NV_GPU_CLIENT_ILLUM_CTRL_MODE_MANUAL_RGB.
+     */
+    NV_GPU_CLIENT_ILLUM_ZONE_CONTROL_DATA_MANUAL_RGB_PARAMS rgbParams;
+} NV_GPU_CLIENT_ILLUM_ZONE_CONTROL_DATA_MANUAL_RGB;
+
+/*!
+ * Used in \ref NV_GPU_ILLUM_ZONE_CONTROL_DATA_PIECEWISE_LINEAR_RGB
+ * Data required to represent control mode of type
+ * \ref NV_GPU_ILLUM_CTRL_MODE_PIECEWISE_LINEAR_RGB.
+ */
+typedef struct _NV_GPU_CLIENT_ILLUM_ZONE_CONTROL_DATA_PIECEWISE_LINEAR
+{
+    /*!
+     * Type of cycle effect to apply.
+     */
+    NV_GPU_CLIENT_ILLUM_PIECEWISE_LINEAR_CYCLE_TYPE    cycleType;
+
+    /*!
+     * Number of times to repeat function within group period.
+     */
+    NV_U8    grpCount;
+
+    /*!
+     * Time in ms to transition from color A to color B.
+     */
+    NV_U16   riseTimems;
+
+    /*!
+     * Time in ms to transition from color B to color A.
+     */
+    NV_U16   fallTimems;
+
+    /*!
+     * Time in ms to remain at color A before color A to color B transition.
+     */
+    NV_U16   ATimems;
+
+    /*!
+     * Time in ms to remain at color B before color B to color A transition.
+     */
+    NV_U16   BTimems;
+
+    /*!
+     * Time in ms to remain idle before next group of repeated function cycles.
+     */
+    NV_U16   grpIdleTimems;
+
+    /*!
+     * Time in ms to offset the cycle relative to other zones.
+     */
+    NV_U16   phaseOffsetms;
+} NV_GPU_CLIENT_ILLUM_ZONE_CONTROL_DATA_PIECEWISE_LINEAR;
+
+/*!
+ * Used in \ref NV_GPU_CLIENT_ILLUM_ZONE_CONTROL_DATA_RGB
+ * Data required to represent control mode of type
+ * \ref NV_GPU_CLIENT_ILLUM_CTRL_MODE_PIECEWISE_LINEAR_RGB.
+ */
+
+#define NV_GPU_CLIENT_ILLUM_CTRL_MODE_PIECEWISE_LINEAR_COLOR_ENDPOINTS           2
+
+typedef struct _NV_GPU_CLIENT_ILLUM_ZONE_CONTROL_DATA_PIECEWISE_LINEAR_RGB
+{
+    /*!
+     * Parameters required to represent control mode of type
+     * \ref NV_GPU_CLIENT_ILLUM_CTRL_MODE_PIECEWISE_LINEAR_RGB.
+     */
+    NV_GPU_CLIENT_ILLUM_ZONE_CONTROL_DATA_MANUAL_RGB_PARAMS rgbParams[NV_GPU_CLIENT_ILLUM_CTRL_MODE_PIECEWISE_LINEAR_COLOR_ENDPOINTS];
+
+    NV_GPU_CLIENT_ILLUM_ZONE_CONTROL_DATA_PIECEWISE_LINEAR  piecewiseLinearData;
+} NV_GPU_CLIENT_ILLUM_ZONE_CONTROL_DATA_PIECEWISE_LINEAR_RGB;
+
+/*!
+ * Used in \ref NV_GPU_CLIENT_ILLUM_ZONE_CONTROL_V1
+ * Describes the control data for illumination zone of type
+ * \ref NV_GPU_CLIENT_ILLUM_ZONE_TYPE_RGB.
+ */
+typedef struct _NV_GPU_CLIENT_ILLUM_ZONE_CONTROL_DATA_RGB
+{
+    /*!
+     * Union of illumination zone control data for zone of type NV_GPU_CLIENT_ILLUM_ZONE_TYPE_RGB.
+     * Interpreted as per ctrlMode.
+     */
+    union
+    {
+        //
+        // Need to be careful when add/expanding types in this union. If any type
+        // exceeds sizeof(rsvd) then rsvd has failed its purpose.
+        //
+        NV_GPU_CLIENT_ILLUM_ZONE_CONTROL_DATA_MANUAL_RGB            manualRGB;
+        NV_GPU_CLIENT_ILLUM_ZONE_CONTROL_DATA_PIECEWISE_LINEAR_RGB  piecewiseLinearRGB;
+
+        /*!
+         * Reserved bytes for possible future extension of this struct.
+         */
+        NV_U8                                         rsvd[64];
+    } data;
+
+    /*!
+     * Reserved for future.
+     */
+    NV_U8    rsvd[64];
+} NV_GPU_CLIENT_ILLUM_ZONE_CONTROL_DATA_RGB;
+
+/*!
+ * Used in \ref NV_GPU_ILLUM_ZONE_CONTROL_DATA_MANUAL_COLOR_FIXED
+ * Parameters required to represent control mode of type
+ * \ref NV_GPU_ILLUM_CTRL_MODE_MANUAL_RGB.
+ */
+typedef struct _NV_GPU_CLIENT_ILLUM_ZONE_CONTROL_DATA_MANUAL_COLOR_FIXED_PARAMS
+{
+    /*!
+     * Brightness percentage value of the zone.
+     */
+    NV_U8 brightnessPct;
+} NV_GPU_CLIENT_ILLUM_ZONE_CONTROL_DATA_MANUAL_COLOR_FIXED_PARAMS;
+
+/*!
+ * Used in \ref NV_GPU_CLIENT_ILLUM_ZONE_CONTROL_DATA_COLOR_FIXED
+ * Data required to represent control mode of type
+ * \ref NV_GPU_CLIENT_ILLUM_CTRL_MODE_MANUAL_RGB.
+ */
+typedef struct _NV_GPU_CLIENT_ILLUM_ZONE_CONTROL_DATA_MANUAL_COLOR_FIXED
+{
+    /*!
+     * Parameters required to represent control mode of type
+     * \ref NV_GPU_CLIENT_ILLUM_CTRL_MODE_MANUAL_RGB.
+     */
+    NV_GPU_CLIENT_ILLUM_ZONE_CONTROL_DATA_MANUAL_COLOR_FIXED_PARAMS colorFixedParams;
+} NV_GPU_CLIENT_ILLUM_ZONE_CONTROL_DATA_MANUAL_COLOR_FIXED;
+
+/*!
+ * Used in \ref NV_GPU_CLIENT_ILLUM_ZONE_CONTROL_DATA_COLOR_FIXED
+ * Data required to represent control mode of type
+ * \ref NV_GPU_CLIENT_ILLUM_CTRL_MODE_PIECEWISE_LINEAR_RGB.
+ */
+typedef struct _NV_GPU_CLIENT_ILLUM_ZONE_CONTROL_DATA_PIECEWISE_LINEAR_COLOR_FIXED
+{
+    /*!
+     * Parameters required to represent control mode of type
+     * \ref NV_GPU_CLIENT_ILLUM_CTRL_MODE_PIECEWISE_LINEAR_RGB.
+     */
+    NV_GPU_CLIENT_ILLUM_ZONE_CONTROL_DATA_MANUAL_COLOR_FIXED_PARAMS colorFixedParams[NV_GPU_CLIENT_ILLUM_CTRL_MODE_PIECEWISE_LINEAR_COLOR_ENDPOINTS];
+
+    NV_GPU_CLIENT_ILLUM_ZONE_CONTROL_DATA_PIECEWISE_LINEAR          piecewiseLinearData;
+} NV_GPU_CLIENT_ILLUM_ZONE_CONTROL_DATA_PIECEWISE_LINEAR_COLOR_FIXED;
+
+/*!
+ * Used in \ref NV_GPU_CLIENT_ILLUM_ZONE_CONTROL_V1
+ * Describes the control data for illum zone of type
+ * \ref NV_GPU_CLIENT_ILLUM_ZONE_TYPE_COLOR_FIXED.
+ */
+typedef struct _NV_GPU_CLIENT_ILLUM_ZONE_CONTROL_DATA_COLOR_FIXED
+{
+    /*!
+     * Union of illum zone control data for zone of type NV_GPU_CLIENT_ILLUM_ZONE_TYPE_COLOR_FIXED.
+     * Interpreted as per ctrlMode.
+     */
+    union
+    {
+        //
+        // Need to be careful when add/expanding types in this union. If any type
+        // exceeds sizeof(rsvd) then rsvd has failed its purpose.
+        //
+        NV_GPU_CLIENT_ILLUM_ZONE_CONTROL_DATA_MANUAL_COLOR_FIXED           manualColorFixed;
+        NV_GPU_CLIENT_ILLUM_ZONE_CONTROL_DATA_PIECEWISE_LINEAR_COLOR_FIXED piecewiseLinearColorFixed;
+        /*!
+         * Reserved bytes for possible future extension of this struct.
+         */
+        NV_U8                                         rsvd[64];
+    } data;
+
+    /*!
+     * Reserved for future.
+     */
+    NV_U8    rsvd[64];
+} NV_GPU_CLIENT_ILLUM_ZONE_CONTROL_DATA_COLOR_FIXED;
+
+typedef struct _NV_GPU_CLIENT_ILLUM_ZONE_CONTROL_V1
 {
     NV_GPU_CLIENT_ILLUM_ZONE_TYPE  type;
     NV_GPU_CLIENT_ILLUM_CTRL_MODE  ctrlMode;
@@ -416,23 +639,37 @@ struct NV_GPU_CLIENT_ILLUM_ZONE_CONTROL_V1
         NV_U8                                                rsvd[64];
     } data;
     NV_U8    rsvd[64];
-};
+} NV_GPU_CLIENT_ILLUM_ZONE_CONTROL_V1;
 
-#define NV_GPU_CLIENT_ILLUM_ZONE_NUM_ZONES_MAX 32
-struct NV_GPU_CLIENT_ILLUM_ZONE_CONTROL_PARAMS {
+typedef struct _NV_GPU_CLIENT_ILLUM_ZONE_CONTROL_PARAMS_V1
+{
+    NV_U32                          version;
 
-    NV_U32 version;
- 
-    NV_U32 bDefault : 1;
-    NV_U32 rsvdField : 31;
+    /*!
+     * Bit field specifying the set of values to retrieve or set
+     * - default (NV_TRUE)
+     * - currently active (NV_FALSE).
+     */
+    NV_U32                          bDefault : 1;
+    NV_U32                          rsvdField : 31;
 
-    NV_U32 numIllumZonesControl;
+    /*!
+     * Number of illumination zones present.
+     */
+    NV_U32   numIllumZonesControl;
 
-    NV_U8 rsvd[64];
-  
+    /*!
+     * Reserved bytes for possible future extension of this struct.
+     */
+    NV_U8                           rsvd[64];
+
     NV_GPU_CLIENT_ILLUM_ZONE_CONTROL_V1 zones[NV_GPU_CLIENT_ILLUM_ZONE_NUM_ZONES_MAX];
+} NV_GPU_CLIENT_ILLUM_ZONE_CONTROL_PARAMS_V1;
 
-};
+#define NV_GPU_CLIENT_ILLUM_ZONE_CONTROL_PARAMS_VER_1 MAKE_NVAPI_VERSION(NV_GPU_CLIENT_ILLUM_ZONE_CONTROL_PARAMS_V1, 1)
+#define NV_GPU_CLIENT_ILLUM_ZONE_CONTROL_PARAMS_VER   NV_GPU_CLIENT_ILLUM_ZONE_CONTROL_PARAMS_VER_1
+typedef NV_GPU_CLIENT_ILLUM_ZONE_CONTROL_PARAMS_V1    NV_GPU_CLIENT_ILLUM_ZONE_CONTROL_PARAMS;
+
 
 
 // Interface: 0150E828
