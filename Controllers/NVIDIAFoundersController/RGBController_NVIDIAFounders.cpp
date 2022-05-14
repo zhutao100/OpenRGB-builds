@@ -11,7 +11,7 @@
 #include "NVIDIAFoundersV1Controller.h"
 #include <array>
 
-RGBController_NVIDIAFoundersV1::RGBController_NVIDIAFoundersV1(std::vector<NVIDIAFoundersV1Controller*> nvidia_founders_ptr)
+RGBController_NVIDIAFoundersV1::RGBController_NVIDIAFoundersV1(NVIDIAFoundersV1Controller* nvidia_founders_ptr)
 {
     nvidia_founders = nvidia_founders_ptr;
 
@@ -23,7 +23,7 @@ RGBController_NVIDIAFoundersV1::RGBController_NVIDIAFoundersV1(std::vector<NVIDI
 
     mode Direct;
     Direct.name       = "Direct";
-    Direct.value      = EVGA_GP102_MODE_CUSTOM;
+    Direct.value      = 0;
     Direct.flags      = MODE_FLAG_HAS_PER_LED_COLOR;
     Direct.color_mode = MODE_COLORS_PER_LED;
     modes.push_back(Direct);
@@ -31,105 +31,92 @@ RGBController_NVIDIAFoundersV1::RGBController_NVIDIAFoundersV1(std::vector<NVIDI
     SetupZones();
 
     // Initialize active mode and stored color
+    // unsigned char raw_active_mode = nvidia_founders[0]->GetMode();
 
-    unsigned char raw_active_mode = nvidia_founders[0]->GetMode();
-
-    active_mode = 0;
-    for(unsigned int i = 0; i < modes.size(); i++)
+    for(uint8_t zone_idx = 0; zone_idx < 2; zone_idx++)
     {
-        if (modes[i].value == raw_active_mode)
-        {
-            active_mode = i;
-            break;
-        }
-    }
-    for(unsigned int i = 0; i < zones.size(); i++)
-    {
-        std::array<unsigned char, 3> rgb = nvidia_founders[i]->GetColor();
-
-        colors[i] = ToRGBColor(rgb[0], rgb[1], rgb[2]);
+        std::array<unsigned char, 3> rgb = nvidia_founders->getColor();
+        zones[zone_idx].colors[0] = ToRGBColor(rgb[0], rgb[1], rgb[2]);
     }
 }
 
 RGBController_NVIDIAFoundersV1::~RGBController_NVIDIAFoundersV1()
 {
-    for(unsigned int i = 0; i < nvidia_founders.size(); i++)
-    {
-        delete nvidia_founders[i];
-    }
+    delete nvidia_founders;
 }
+
+void RGBController_NVIDIAFoundersV1::UpdateSingleLED(int)
+{
+    std::array<unsigned char, 3> rgb = nvidia_founders->getColor();
+    unsigned char red = RGBGetRValue(rgb[0]);
+    unsigned char grn = RGBGetGValue(rgb[1]);
+    unsigned char blu = RGBGetBValue(rgb[2]);
+    nvidia_founders->setColor((NV_U8)red, (NV_U8)grn, (NV_U8)blu);
+}
+
 
 void RGBController_NVIDIAFoundersV1::SetupZones()
 {
     /*---------------------------------------------------------*\
-    | This device basically has two controllable zones, one at  |
-    | the top of the board with GeForce 1080 Ti and another for |
-    | the backplate logo (K|NGP|N logo, or EVGA GeForce 1080 Ti |
-    | for the FTW3).
+    | This device only allows setting the entire zone for all   |
+    | LED's in the zone and does not allow per LED control.     |
+    | Resizing is only possible on zone 4, addressable header   |
     \*---------------------------------------------------------*/
-    for(unsigned int i = 0; i < nvidia_founders.size(); i++)
+
+    for(uint8_t zone_idx = 0; zone_idx < 2; zone_idx++)
     {
-        zone new_zone;
-        led new_led;
+        zone* new_zone = new zone();
+        led*  new_led  = new led();
 
-        new_zone.name          = nvidia_founders[i]->GetName();
-        new_zone.type          = ZONE_TYPE_SINGLE;
-        new_zone.leds_min      = 1;
-        new_zone.leds_max      = 1;
-        new_zone.leds_count    = 1;
-        new_zone.matrix_map    = NULL;
+        new_zone->name          = nvidia_illum_zone_names[zone_idx];
+        new_zone->type          = ZONE_TYPE_SINGLE;
+        new_zone->leds_min      = 1;
+        new_zone->leds_max      = 1;
+        new_zone->leds_count    = 1;
+        new_zone->matrix_map    = NULL;
 
-        new_led.name           = nvidia_founders[i]->GetName();
-
-        leds.push_back(new_led);
-        zones.push_back(new_zone);
+        new_led->name           = nvidia_illum_zone_names[zone_idx];
+        /*---------------------------------------------------------*\
+        | Push the zone and LED on to device vectors                |
+        \*---------------------------------------------------------*/
+        leds.push_back(*new_led);
+        zones.push_back(*new_zone);
+        zoneIndexMap.push_back(zone_idx);
     }
-
     SetupColors();
+
 }
 
-void RGBController_NVIDIAFoundersV1::ResizeZone(int /*zone*/, int /*new_size*/)
-{
-    /*---------------------------------------------------------*\
-    | This device does not support resizing zones               |
-    \*---------------------------------------------------------*/
-}
-
+// Gets called from apply all to selection
 void RGBController_NVIDIAFoundersV1::DeviceUpdateLEDs()
 {
-    for(unsigned int zone_idx = 0; zone_idx < zones.size(); zone_idx++)
-    {
-        UpdateZoneLEDs(zone_idx);
-    }
+    std::array<unsigned char, 3> rgb = nvidia_founders->getColor();
+    unsigned char red = RGBGetRValue(rgb[0]);
+    unsigned char grn = RGBGetGValue(rgb[1]);
+    unsigned char blu = RGBGetBValue(rgb[2]);
+    nvidia_founders->setColor((NV_U8)red, (NV_U8)grn, (NV_U8)blu);
 }
 
 void RGBController_NVIDIAFoundersV1::UpdateZoneLEDs(int zone)
 {
-    RGBColor color    = colors[zone];
-    unsigned char red = RGBGetRValue(color);
-    unsigned char grn = RGBGetGValue(color);
-    unsigned char blu = RGBGetBValue(color);
-    nvidia_founders[zone]->SetColor(red, grn, blu);
-}
-
-void RGBController_NVIDIAFoundersV1::UpdateSingleLED(int /*led*/)
-{
-    DeviceUpdateLEDs();
+    std::array<unsigned char, 3> rgb = nvidia_founders->getColor();
+    unsigned char red = RGBGetRValue(rgb[0]);
+    unsigned char grn = RGBGetGValue(rgb[1]);
+    unsigned char blu = RGBGetBValue(rgb[2]);
+    nvidia_founders->setColor((NV_U8)red, (NV_U8)grn, (NV_U8)blu);
 }
 
 void RGBController_NVIDIAFoundersV1::SetCustomMode()
 {
-    active_mode = 1;
+
 }
 
 void RGBController_NVIDIAFoundersV1::DeviceUpdateMode()
 {
-    for (int i = 0; i < nvidia_founders.size(); i++)
-    {
-        nvidia_founders[i]->SetMode((unsigned char)modes[(unsigned int)active_mode].value);
-    }
+
 }
 
-void RGBController_NVIDIAFoundersV1::DeviceSaveMode()
+void RGBController_NVIDIAFoundersV1::ResizeZone(int zone, int new_size)
 {
+
 }

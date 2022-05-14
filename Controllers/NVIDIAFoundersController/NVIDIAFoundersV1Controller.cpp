@@ -9,114 +9,49 @@
 #include "NVIDIAFoundersV1Controller.h"
 #include "LogManager.h"
 
-NVIDIAFoundersV1Controller::NVIDIAFoundersV1Controller(i2c_smbus_interface* bus_ptr, zoneinfo info)
+NVIDIAFoundersV1Controller::NVIDIAFoundersV1Controller(i2c_smbus_interface* bus_ptr)
 {
     bus = bus_ptr;
-    zi = info;
+    // This value probably needs retrieved with another NvAPI call, but hard-coding it does work
+    //zoneParams.version = (NV_U32)72012;
+    // This value can't be hard coded, it seems to come back incremented by the actual number of zones for each NvAPI call involving it
+    zoneParams.numIllumZonesControl = 0;
 }
 
 NVIDIAFoundersV1Controller::~NVIDIAFoundersV1Controller()
 {
 }
 
-std::string NVIDIAFoundersV1Controller::GetDeviceLocation()
+
+void NVIDIAFoundersV1Controller::setColor(NV_U8 red, NV_U8 green, NV_U8 blue)
 {
-    std::string return_string(bus->device_name);
-    char addr[5];
-    snprintf(addr, 5, "0x%02X", zi.dev_addr);
-    return_string.append(", address ");
-    return_string.append(addr);
-    return("I2C: " + return_string);
+    std::memset(&zoneParams, 0, sizeof(zoneParams));
+    zoneParams.version = 72012;
+    zoneParams.bDefault = 0;
+    red = (NV_U8)218;
+    green = (NV_U8)86;
+    blue = (NV_U8)150;
+    bus->nvapi_xfer(NVAPI_ZONE_GET_CONTROL, &zoneParams);
+    // This zone is the V-shaped space on the 3080FE
+    zoneParams.zones[0].ctrlMode = NV_GPU_CLIENT_ILLUM_CTRL_MODE_MANUAL_RGB;
+    // Forcing to this for now to avoid having to use the undefined type 3
+    zoneParams.zones[0].type = NV_GPU_CLIENT_ILLUM_ZONE_TYPE_RGB;
+    // zoneParams.zones[0].type = static_cast<NV_GPU_CLIENT_ILLUM_ZONE_TYPE>(3);
+    zoneParams.zones[0].data.rgb.data.manualRGB.rgbParams.colorR = red;
+    zoneParams.zones[0].data.rgb.data.manualRGB.rgbParams.colorG = green;
+    zoneParams.zones[0].data.rgb.data.manualRGB.rgbParams.colorB = blue;
+    zoneParams.zones[0].data.rgb.data.manualRGB.rgbParams.brightnessPct = (NV_U8)0x64;
+
+    bus->nvapi_xfer(NVAPI_ZONE_SET_CONTROL, &zoneParams);
 }
 
-void NVIDIAFoundersV1Controller::SetColor(unsigned char red, unsigned char green, unsigned char blue)
+std::array<unsigned char, 3> NVIDIAFoundersV1Controller::getColor()
 {
-    SendCommand(EVGA_GP102_CMD_BEGIN);
-    SendCommand(EVGA_GP102_CMD_COLOR);
+    bus->nvapi_xfer(NVAPI_ZONE_GET_CONTROL, &zoneParams);
 
-    if (CommandAcknowledged())
-    {
-        unsigned char rgb[] = { red, green, blue };
+    unsigned char red = (unsigned char)zoneParams.zones[0].data.rgb.data.manualRGB.rgbParams.colorR;
+    unsigned char green = (unsigned char)zoneParams.zones[0].data.rgb.data.manualRGB.rgbParams.colorG;
+    unsigned char blue = (unsigned char)zoneParams.zones[0].data.rgb.data.manualRGB.rgbParams.colorB;
 
-        for (int i = 0; i < 3; i++)
-        {
-            bus->i2c_smbus_write_byte_data(zi.dev_addr, zi.color_addrs[i], rgb[i]);
-        }
-
-        SendCommand(EVGA_GP102_CMD_END);
-
-        if (!CommandCompleted())
-        {
-            LOG_WARNING("[%s] Non-clear status report from hardware.", NVIDIA_FOUNDERS_V1_CONTROLLER_NAME);
-        }
-    }
-}
-std::array<unsigned char, 3> NVIDIAFoundersV1Controller::GetColor()
-{
-    return { GetRed(), GetGreen(), GetBlue() };
-}
-
-bool NVIDIAFoundersV1Controller::IsValid()
-{
-    for (int i = 0; i < 3; i++)
-    {
-        char res = bus->i2c_smbus_read_byte_data(zi.dev_addr, EVGA_GP102_REG_VALID);
-        if (res == 0x1F)
-        {
-            LOG_TRACE("[%s] Zone discovery successful on address: 0x%02X.", NVIDIA_FOUNDERS_V1_CONTROLLER_NAME, zi.dev_addr);
-            return true;
-        }
-        LOG_DEBUG("[%s] Zone discovery failed on address: 0x%02X expected: 0x1F received: 0x%02X.", NVIDIA_FOUNDERS_V1_CONTROLLER_NAME, zi.dev_addr, res);
-    }
-    return false;
-}
-
-void NVIDIAFoundersV1Controller::SetMode(unsigned char mode)
-{
-    bus->i2c_smbus_write_byte_data(zi.dev_addr, EVGA_GP102_REG_MODE, mode);
-}
-
-unsigned char NVIDIAFoundersV1Controller::GetMode()
-{
-    return(bus->i2c_smbus_read_byte_data(zi.dev_addr, EVGA_GP102_REG_MODE));
-}
-
-void NVIDIAFoundersV1Controller::SendCommand(s32 command)
-{
-    bus->i2c_smbus_write_byte_data(zi.dev_addr, EVGA_GP102_REG_CMD, command);
-}
-
-s32 NVIDIAFoundersV1Controller::QueryCommand(s32 command)
-{
-    return bus->i2c_smbus_read_byte_data(zi.dev_addr, command);
-}
-
-bool NVIDIAFoundersV1Controller::CommandAcknowledged()
-{
-    return QueryCommand(EVGA_GP102_REG_CMD) == zi.resp_ready;
-}
-
-bool NVIDIAFoundersV1Controller::CommandCompleted()
-{
-    return QueryCommand(EVGA_GP102_REG_CMD) == zi.resp_clear;
-}
-
-unsigned char NVIDIAFoundersV1Controller::GetRed()
-{
-    return(bus->i2c_smbus_read_byte_data(zi.dev_addr, zi.color_addrs[EVGA_GP102_CIDX_RED]));
-}
-
-unsigned char NVIDIAFoundersV1Controller::GetGreen()
-{
-    return(bus->i2c_smbus_read_byte_data(zi.dev_addr, zi.color_addrs[EVGA_GP102_CIDX_GREEN]));
-}
-
-unsigned char NVIDIAFoundersV1Controller::GetBlue()
-{
-    return(bus->i2c_smbus_read_byte_data(zi.dev_addr, zi.color_addrs[EVGA_GP102_CIDX_BLUE]));
-}
-
-std::string NVIDIAFoundersV1Controller::GetName()
-{
-    return zi.zone_name;
+    return {red, green, blue};
 }

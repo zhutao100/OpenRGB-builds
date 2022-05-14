@@ -1,11 +1,10 @@
-
 /*-----------------------------------------*\
-|  RGBController_EVGAGP102.h                |
+|  RGBController_NVIDIAFounders.h           |
 |                                           |
-|  EVGA Generic RGB Interface for OpenRGB   |
-|  EVGA GP102-based Nvidia GPUs.            |
+|  NVIDIA Founders Generic RGB Interface    |
+|  for OpenRGB                              |
 |                                           |
-|  Fabricio Murta (avengerx) 1/31/2021      |
+|  Carter Miller (GingerRunner) 1/04/2021   |
 \*-----------------------------------------*/
 
 #pragma once
@@ -15,24 +14,33 @@
 
 #define NVIDIA_FOUNDERS_V1_CONTROLLER_NAME   "NVIDIA_FOUNDERS_V1"
 
-class RGBController_NVIDIAFounders_V1 : public RGBController
+static const char* nvidia_illum_zone_names[] =
+{
+    "Backplate",
+    "Logo"
+};
+
+class RGBController_NVIDIAFoundersV1 : public RGBController
 {
 public:
-    RGBController_NVIDIAFoundersV1(std::vector<NVIDIAFoundersV1Controller*> nvidia_founders_ptr);
+    RGBController_NVIDIAFoundersV1(NVIDIAFoundersV1Controller* nvidia_founders_ptr);
     ~RGBController_NVIDIAFoundersV1();
 
-    void        SetupZones();
+    void UpdateSingleLED(int led);
 
-    void        ResizeZone(int zone, int new_size);
+    void SetupZones();
 
-    void        DeviceUpdateLEDs();
-    void        UpdateZoneLEDs(int zone);
-    void        UpdateSingleLED(int led);
+    void DeviceUpdateLEDs();
 
-    void        SetCustomMode();
-    void        DeviceUpdateMode();
-    void        DeviceSaveMode();
+    void UpdateZoneLEDs(int);
+
+    void SetCustomMode();
+
+    void DeviceUpdateMode();
+
+    void ResizeZone(int, int);
 
 private:
-    std::vector<NVIDIAFoundersV1Controller*> nvidia_founders;
+    NVIDIAFoundersV1Controller* nvidia_founders;
+    std::vector<uint8_t> zoneIndexMap;
 };
