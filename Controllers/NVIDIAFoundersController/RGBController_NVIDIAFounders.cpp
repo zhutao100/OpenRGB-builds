@@ -21,12 +21,24 @@ RGBController_NVIDIAFoundersV1::RGBController_NVIDIAFoundersV1(NVIDIAFoundersV1C
 
     type = DEVICE_TYPE_GPU;
 
-    mode Direct;
-    Direct.name       = "Direct";
-    Direct.value      = 0;
-    Direct.flags      = MODE_FLAG_HAS_PER_LED_COLOR;
-    Direct.color_mode = MODE_COLORS_PER_LED;
-    modes.push_back(Direct);
+    mode Off;
+    Off.name       = "Off";
+    Off.value      = 0;
+    Off.flags      = MODE_FLAG_HAS_PER_LED_COLOR;
+    Off.color_mode = MODE_COLORS_PER_LED;
+    modes.push_back(Off);
+
+    mode Static;
+    Static.name       = "Static";
+    Static.value      = 1;
+    Static.flags      = MODE_FLAG_HAS_BRIGHTNESS | MODE_FLAG_HAS_PER_LED_COLOR;
+    Static.color_mode = MODE_COLORS_PER_LED;
+    Static.colors_min = 1;
+    Static.colors_max = 1;
+    Static.brightness_min = 0;
+    Static.brightness = 100;
+    Static.brightness_max = 100;
+    modes.push_back(Static);
 
     SetupZones();
 
@@ -51,7 +63,7 @@ void RGBController_NVIDIAFoundersV1::UpdateSingleLED(int)
     unsigned char red = RGBGetRValue(rgb[0]);
     unsigned char grn = RGBGetGValue(rgb[1]);
     unsigned char blu = RGBGetBValue(rgb[2]);
-    nvidia_founders->setColor((NV_U8)red, (NV_U8)grn, (NV_U8)blu);
+    // nvidia_founders->setZone((NV_U8)red, (NV_U8)grn, (NV_U8)blu);
 }
 
 
@@ -60,9 +72,11 @@ void RGBController_NVIDIAFoundersV1::SetupZones()
     /*---------------------------------------------------------*\
     | This device only allows setting the entire zone for all   |
     | LED's in the zone and does not allow per LED control.     |
-    | Resizing is only possible on zone 4, addressable header   |
     \*---------------------------------------------------------*/
 
+    // The founders' cards have two zones, the V-shaped area and the logo.
+    // The logo doesn't have color control, only brightness, it has not been
+    // attempted to control per-LED on this card
     for(uint8_t zone_idx = 0; zone_idx < 2; zone_idx++)
     {
         zone* new_zone = new zone();
@@ -90,20 +104,21 @@ void RGBController_NVIDIAFoundersV1::SetupZones()
 // Gets called from apply all to selection
 void RGBController_NVIDIAFoundersV1::DeviceUpdateLEDs()
 {
-    std::array<unsigned char, 3> rgb = nvidia_founders->getColor();
-    unsigned char red = RGBGetRValue(rgb[0]);
-    unsigned char grn = RGBGetGValue(rgb[1]);
-    unsigned char blu = RGBGetBValue(rgb[2]);
-    nvidia_founders->setColor((NV_U8)red, (NV_U8)grn, (NV_U8)blu);
+    NVIDIAFounders_Config nv_zone_config;
+    for(uint8_t zone_idx = 0; zone_idx < zoneIndexMap.size(); zone_idx++)
+    {
+        nv_zone_config.colors[0] = colors[zone_idx];
+        nv_zone_config.brightness = modes[active_mode].brightness;
+        nvidia_founders->setZone(zone_idx, modes[active_mode].value, nv_zone_config);
+    }
 }
 
 void RGBController_NVIDIAFoundersV1::UpdateZoneLEDs(int zone)
 {
-    std::array<unsigned char, 3> rgb = nvidia_founders->getColor();
-    unsigned char red = RGBGetRValue(rgb[0]);
-    unsigned char grn = RGBGetGValue(rgb[1]);
-    unsigned char blu = RGBGetBValue(rgb[2]);
-    nvidia_founders->setColor((NV_U8)red, (NV_U8)grn, (NV_U8)blu);
+    NVIDIAFounders_Config nv_zone_config;
+    nv_zone_config.colors[0] = colors[zone];
+    nv_zone_config.brightness = modes[active_mode].brightness;
+    nvidia_founders->setZone(zone, modes[active_mode].value, nv_zone_config);
 }
 
 void RGBController_NVIDIAFoundersV1::SetCustomMode()
