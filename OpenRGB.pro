@@ -136,6 +136,7 @@ INCLUDEPATH +=                                                                  
     Controllers/MSIOptixController/                                                             \
     Controllers/MSIRGBController/                                                               \
     Controllers/MSIVigorController/                                                             \
+    Controllers/NVIDIAIlluminationController/                                                   \
     Controllers/NanoleafController/                                                             \
     Controllers/NVIDIAFoundersController/                                                       \
     Controllers/NZXTHue2Controller/                                                             \
@@ -466,6 +467,8 @@ HEADERS +=                                                                      
     Controllers/MSIRGBController/RGBController_MSIRGB.h                                         \
     Controllers/N5312AController/N5312AController.h                                             \
     Controllers/N5312AController/RGBController_N5312A.h                                         \
+    Controllers/NVIDIAIlluminationController/NVIDIAIlluminationV1Controller.h                   \
+    Controllers/NVIDIAIlluminationController/RGBController_NVIDIAIllumination.h                 \
     Controllers/NvidiaESAController/NvidiaESAController.h                                       \
     Controllers/NanoleafController/RGBController_Nanoleaf.h                                     \
     Controllers/NvidiaESAController/RGBController_NvidiaESA.h                                   \
@@ -970,6 +973,9 @@ SOURCES +=                                                                      
     Controllers/MSIVigorController/RGBController_MSIVigorGK30.cpp                               \
     Controllers/MSIVigorController/MSIVigorControllerDetect.cpp                                 \
     Controllers/MSIVigorController/MSIVigorGK30Controller.cpp                                   \
+    Controllers/NVIDIAIlluminationController/NVIDIAIlluminationV1Controller.cpp                 \
+    Controllers/NVIDIAIlluminationController/NVIDIAIlluminationControllerDetect.cpp             \
+    Controllers/NVIDIAIlluminationController/RGBController_NVIDIAIllumination.cpp               \
     Controllers/NanoleafController/NanoleafController.cpp                                       \
     Controllers/NanoleafController/NanoleafControllerDetect.cpp                                 \
     Controllers/NanoleafController/RGBController_Nanoleaf.cpp                                   \

@@ -1,24 +1,24 @@
 /*-----------------------------------------*\
-|  NVIDIAFoundersV1Controller.cpp           |
+|  NVIDIAIlluminationV1Controller.cpp           |
 |                                           |
 |  Driver for NVIDIA Founders GPUs          |
 |                                           |
 |  Carter Miller (GingerRunner) 1/5/2022    |
 \*-----------------------------------------*/
 
-#include "NVIDIAFoundersV1Controller.h"
+#include "NVIDIAIlluminationV1Controller.h"
 #include "LogManager.h"
 
-NVIDIAFoundersV1Controller::NVIDIAFoundersV1Controller(i2c_smbus_interface* bus_ptr)
+NVIDIAIlluminationV1Controller::NVIDIAIlluminationV1Controller(i2c_smbus_interface* bus_ptr)
 {
     bus = bus_ptr;
 }
 
-NVIDIAFoundersV1Controller::~NVIDIAFoundersV1Controller()
+NVIDIAIlluminationV1Controller::~NVIDIAIlluminationV1Controller()
 {
 }
 
-void NVIDIAFoundersV1Controller::getControl()
+void NVIDIAIlluminationV1Controller::getControl()
 {
     std::memset(&zoneParams, 0, sizeof(zoneParams));
     // Hardcoded value found via sniffing
@@ -28,12 +28,12 @@ void NVIDIAFoundersV1Controller::getControl()
     bus->nvapi_xfer(NVAPI_ZONE_GET_CONTROL, &zoneParams);
 }
 
-void NVIDIAFoundersV1Controller::setControl()
+void NVIDIAIlluminationV1Controller::setControl()
 {
     bus->nvapi_xfer(NVAPI_ZONE_SET_CONTROL, &zoneParams);
 }
 
-void NVIDIAFoundersV1Controller::setZone(uint8_t zone, uint8_t mode, NVIDIAFounders_Config zone_config)
+void NVIDIAIlluminationV1Controller::setZone(uint8_t zone, uint8_t mode, NVIDIAIllumination_Config zone_config)
 {
     getControl();
     uint8_t red = RGBGetRValue(zone_config.colors[0]);
@@ -42,7 +42,7 @@ void NVIDIAFoundersV1Controller::setZone(uint8_t zone, uint8_t mode, NVIDIAFound
     uint8_t white = 0;
     switch (mode)
     {
-        case NVIDIA_FOUNDERS_OFF:
+        case NVIDIA_ILLUMINATION_OFF:
             zoneParams.zones[zone].ctrlMode = NV_GPU_CLIENT_ILLUM_CTRL_MODE_MANUAL_RGB;
             if (zoneParams.zones[zone].type == NV_GPU_CLIENT_ILLUM_ZONE_TYPE_RGB)
             {
@@ -65,7 +65,7 @@ void NVIDIAFoundersV1Controller::setZone(uint8_t zone, uint8_t mode, NVIDIAFound
                 zoneParams.zones[zone].data.rgbw.data.manualRGBW.rgbwParams.colorR = 0;
             }
             break;
-        case NVIDIA_FOUNDERS_DIRECT:
+        case NVIDIA_ILLUMINATION_DIRECT:
             zoneParams.zones[zone].ctrlMode = NV_GPU_CLIENT_ILLUM_CTRL_MODE_MANUAL_RGB;
             if (zoneParams.zones[zone].type == NV_GPU_CLIENT_ILLUM_ZONE_TYPE_RGB)
             {
@@ -109,7 +109,7 @@ void NVIDIAFoundersV1Controller::setZone(uint8_t zone, uint8_t mode, NVIDIAFound
 }
 
 
-std::array<unsigned char, 3> NVIDIAFoundersV1Controller::getColor()
+std::array<unsigned char, 3> NVIDIAIlluminationV1Controller::getColor()
 {
     bus->nvapi_xfer(NVAPI_ZONE_GET_CONTROL, &zoneParams);
 

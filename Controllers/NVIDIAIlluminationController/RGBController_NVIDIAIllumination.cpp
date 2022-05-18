@@ -1,23 +1,23 @@
 /*-----------------------------------------*\
-|  RGBController_EVGAGPUv1.cpp              |
+|  RGBController_NVIDIAIllumination.cpp     |
 |                                           |
-|  Generic RGB Interface for OpenRGB EVGA   |
-|  GP102-based Nvidia GPUs.                 |
+|  Generic RGB Interface for OpenRGB direct |
+|  NVIDIA Illumination based Nvidia GPUs.   |
 |                                           |
-|  Fabricio Murta (avengerx) 1/31/2021      |
+|  Carter Miller (GingerRunner) 1/04/2022   |
 \*-----------------------------------------*/
 
-#include "RGBController_NVIDIAFounders.h"
-#include "NVIDIAFoundersV1Controller.h"
+#include "RGBController_NVIDIAIllumination.h"
+#include "NVIDIAIlluminationV1Controller.h"
 #include <array>
 
-RGBController_NVIDIAFoundersV1::RGBController_NVIDIAFoundersV1(NVIDIAFoundersV1Controller* nvidia_founders_ptr)
+RGBController_NVIDIAIlluminationV1::RGBController_NVIDIAIlluminationV1(NVIDIAIlluminationV1Controller* nvidia_illumination_ptr)
 {
-    nvidia_founders = nvidia_founders_ptr;
+    nvidia_illumination = nvidia_illumination_ptr;
 
-    name        = "NVIDIA FOUNDERS GPU";
+    name        = "NVIDIA Illumination GPU";
     vendor      = "NVIDIA";
-    description = "NVIDIA Founders Edition RGB GPU Device";
+    description = "NVIDIA Illumination RGB GPU Device";
 
     type = DEVICE_TYPE_GPU;
 
@@ -47,22 +47,22 @@ RGBController_NVIDIAFoundersV1::RGBController_NVIDIAFoundersV1(NVIDIAFoundersV1C
 
     for(uint8_t zone_idx = 0; zone_idx < 2; zone_idx++)
     {
-        std::array<unsigned char, 3> rgb = nvidia_founders->getColor();
+        std::array<unsigned char, 3> rgb = nvidia_illumination->getColor();
         zones[zone_idx].colors[0] = ToRGBColor(rgb[0], rgb[1], rgb[2]);
     }
 }
 
-RGBController_NVIDIAFoundersV1::~RGBController_NVIDIAFoundersV1()
+RGBController_NVIDIAIlluminationV1::~RGBController_NVIDIAIlluminationV1()
 {
-    delete nvidia_founders;
+    delete nvidia_illumination;
 }
 
-void RGBController_NVIDIAFoundersV1::UpdateSingleLED(int)
+void RGBController_NVIDIAIlluminationV1::UpdateSingleLED(int)
 {
     DeviceUpdateLEDs();
 }
 
-void RGBController_NVIDIAFoundersV1::SetupZones()
+void RGBController_NVIDIAIlluminationV1::SetupZones()
 {
     /*---------------------------------------------------------*\
     | This device only allows setting the entire zone for all   |
@@ -97,36 +97,36 @@ void RGBController_NVIDIAFoundersV1::SetupZones()
 }
 
 // Gets called from apply all to selection
-void RGBController_NVIDIAFoundersV1::DeviceUpdateLEDs()
+void RGBController_NVIDIAIlluminationV1::DeviceUpdateLEDs()
 {
-    NVIDIAFounders_Config nv_zone_config;
+    NVIDIAIllumination_Config nv_zone_config;
     for(uint8_t zone_idx = 0; zone_idx < zoneIndexMap.size(); zone_idx++)
     {
         nv_zone_config.colors[0] = colors[zone_idx];
         nv_zone_config.brightness = modes[active_mode].brightness;
-        nvidia_founders->setZone(zone_idx, modes[active_mode].value, nv_zone_config);
+        nvidia_illumination->setZone(zone_idx, modes[active_mode].value, nv_zone_config);
     }
 }
 
-void RGBController_NVIDIAFoundersV1::UpdateZoneLEDs(int zone)
+void RGBController_NVIDIAIlluminationV1::UpdateZoneLEDs(int zone)
 {
-    NVIDIAFounders_Config nv_zone_config;
+    NVIDIAIllumination_Config nv_zone_config;
     nv_zone_config.colors[0] = colors[zone];
     nv_zone_config.brightness = modes[active_mode].brightness;
-    nvidia_founders->setZone(zone, modes[active_mode].value, nv_zone_config);
+    nvidia_illumination->setZone(zone, modes[active_mode].value, nv_zone_config);
 }
 
-void RGBController_NVIDIAFoundersV1::SetCustomMode()
+void RGBController_NVIDIAIlluminationV1::SetCustomMode()
 {
 
 }
 
-void RGBController_NVIDIAFoundersV1::DeviceUpdateMode()
+void RGBController_NVIDIAIlluminationV1::DeviceUpdateMode()
 {
 
 }
 
-void RGBController_NVIDIAFoundersV1::ResizeZone(int zone, int new_size)
+void RGBController_NVIDIAIlluminationV1::ResizeZone(int zone, int new_size)
 {
 
 }

@@ -1,11 +1,11 @@
 /*-----------------------------------------*\
-|  NVIDIAFoundersV1Controller.h                    |
+|  NVIDIAIlluminationV1Controller.h         |
 |                                           |
-|  Definitions and types for EVGA           |
-|  GP102-based Nvidia GPUs' RGB controller  |
-|  GeForce GTX 1080 Ti K|NGP|N and FTW3.    |
+|  Definitions and types for direct NVIDIA  |
+|  Illumination-based Nvidia GPUs' RGB      |
+|  controller                               |
 |                                           |
-|  Fabricio Murta (avengerx) 1/31/2021      |
+|  Carter Miller (GingerRunner) 1/04/2022   |
 \*-----------------------------------------*/
 
 #include <string>
@@ -19,9 +19,9 @@
 
 #pragma once
 
-#define NVIDIA_FOUNDERS_V1_CONTROLLER_NAME   "NVIDIA_FOUNDERS_V1"
+#define NVIDIA_ILLUMINATION_V1_CONTROLLER_NAME   "NVIDIA_ILLUMINATION_V1"
 
-struct NVIDIAFounders_Config
+struct NVIDIAIllumination_Config
 {
     uint8_t brightness;
     RGBColor colors[7];
@@ -29,17 +29,17 @@ struct NVIDIAFounders_Config
 
 enum
 {
-    NVIDIA_FOUNDERS_OFF = 0,
-    NVIDIA_FOUNDERS_DIRECT = 1
+    NVIDIA_ILLUMINATION_OFF = 0,
+    NVIDIA_ILLUMINATION_DIRECT = 1
 };
 
-class NVIDIAFoundersV1Controller
+class NVIDIAIlluminationV1Controller
 {
 public:
-    NVIDIAFoundersV1Controller(i2c_smbus_interface* bus);
-    ~NVIDIAFoundersV1Controller();
+    NVIDIAIlluminationV1Controller(i2c_smbus_interface* bus);
+    ~NVIDIAIlluminationV1Controller();
 
-    void setZone(uint8_t zone, uint8_t mode, NVIDIAFounders_Config zone_config);
+    void setZone(uint8_t zone, uint8_t mode, NVIDIAIllumination_Config zone_config);
     std::array<unsigned char, 3> getColor();
     uint8_t normalizeToPercentage(uint8_t value);
     void getControl();
