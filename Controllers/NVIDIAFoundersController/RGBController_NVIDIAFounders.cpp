@@ -59,13 +59,8 @@ RGBController_NVIDIAFoundersV1::~RGBController_NVIDIAFoundersV1()
 
 void RGBController_NVIDIAFoundersV1::UpdateSingleLED(int)
 {
-    std::array<unsigned char, 3> rgb = nvidia_founders->getColor();
-    unsigned char red = RGBGetRValue(rgb[0]);
-    unsigned char grn = RGBGetGValue(rgb[1]);
-    unsigned char blu = RGBGetBValue(rgb[2]);
-    // nvidia_founders->setZone((NV_U8)red, (NV_U8)grn, (NV_U8)blu);
+    DeviceUpdateLEDs();
 }
-
 
 void RGBController_NVIDIAFoundersV1::SetupZones()
 {

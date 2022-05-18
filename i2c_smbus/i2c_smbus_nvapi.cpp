@@ -168,6 +168,8 @@ s32 i2c_smbus_nvapi::nvapi_xfer(char nvapi_call, NV_GPU_CLIENT_ILLUM_ZONE_CONTRO
     if(nvapi_call == NVAPI_ZONE_SET_CONTROL)
     {
         ret = NvAPI_GPU_ClientIllumZonesSetControl(handle, zone_control_struct);
+        // Seems necessary based off some experimentation (CMiller)
+        std::this_thread::sleep_for(std::chrono::milliseconds(30));
     }
     else if(nvapi_call == NVAPI_ZONE_GET_CONTROL)
     {
