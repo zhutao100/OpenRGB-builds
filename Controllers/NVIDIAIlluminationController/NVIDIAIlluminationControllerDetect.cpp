@@ -29,8 +29,8 @@ typedef struct
 
 static const gpu_pci_device device_list[] =
 {
-    {NVIDIA_VEN,   NVIDIA_RTX3080_DEV,         NVIDIA_VEN,   NVIDIA_RTX3080_FE_NON_LHR_SUB_DEV,         NVIDIA_ILLUMINATION_V1,    "3080FE Non-LHR"},
-    {NVIDIA_VEN,   NVIDIA_RTX2070S_DEV,         NVIDIA_VEN,   NVIDIA_RTX2070_FE_SUPER_SUB_DEV,         NVIDIA_ILLUMINATION_V1,    "2070FE SUPER"},
+    {NVIDIA_VEN,   NVIDIA_RTX3080_DEV,         NVIDIA_VEN,   NVIDIA_RTX3080_FE_NON_LHR_SUB_DEV,       NVIDIA_ILLUMINATION_V1,    "3080FE Non-LHR"},
+    {NVIDIA_VEN,   NVIDIA_RTX2070S_DEV,        NVIDIA_VEN,   NVIDIA_RTX2070_FE_SUPER_SUB_DEV,         NVIDIA_ILLUMINATION_V1,    "2070FE SUPER"},
 
 };
 /******************************************************************************************\
