@@ -42,6 +42,29 @@ void NVIDIAFoundersV1Controller::setZone(uint8_t zone, uint8_t mode, NVIDIAFound
     uint8_t white = 0;
     switch (mode)
     {
+        case NVIDIA_FOUNDERS_OFF:
+            zoneParams.zones[zone].ctrlMode = NV_GPU_CLIENT_ILLUM_CTRL_MODE_MANUAL_RGB;
+            if (zoneParams.zones[zone].type == NV_GPU_CLIENT_ILLUM_ZONE_TYPE_RGB)
+            {
+                zoneParams.zones[zone].data.rgb.data.manualRGB.rgbParams.colorR = 0;
+                zoneParams.zones[zone].data.rgb.data.manualRGB.rgbParams.colorG = 0;
+                zoneParams.zones[zone].data.rgb.data.manualRGB.rgbParams.colorB = 0;
+                zoneParams.zones[zone].data.rgb.data.manualRGB.rgbParams.brightnessPct = 0;
+            }
+            else if (zoneParams.zones[zone].type == NV_GPU_CLIENT_ILLUM_ZONE_TYPE_RGBW)
+            {
+                zoneParams.zones[zone].data.rgbw.data.manualRGBW.rgbwParams.colorR = 0;
+                zoneParams.zones[zone].data.rgbw.data.manualRGBW.rgbwParams.colorG = 0;
+                zoneParams.zones[zone].data.rgbw.data.manualRGBW.rgbwParams.colorB = 0;
+                zoneParams.zones[zone].data.rgbw.data.manualRGBW.rgbwParams.colorW = 0;
+                zoneParams.zones[zone].data.rgbw.data.manualRGBW.rgbwParams.brightnessPct = 0;
+            }
+            // This controller type requries the brightnessPct gets set to the red LED zone.  Not sure why.
+            else if (zoneParams.zones[zone].type == NV_GPU_CLIENT_ILLUM_ZONE_TYPE_SINGLE_COLOR)
+            {
+                zoneParams.zones[zone].data.rgbw.data.manualRGBW.rgbwParams.colorR = 0;
+            }
+            break;
         case NVIDIA_FOUNDERS_DIRECT:
             zoneParams.zones[zone].ctrlMode = NV_GPU_CLIENT_ILLUM_CTRL_MODE_MANUAL_RGB;
             if (zoneParams.zones[zone].type == NV_GPU_CLIENT_ILLUM_ZONE_TYPE_RGB)
@@ -55,17 +78,14 @@ void NVIDIAFoundersV1Controller::setZone(uint8_t zone, uint8_t mode, NVIDIAFound
             {
                 uint8_t minRGBvalue = 0xFF; 
                 uint8_t maxRGBvalue = 0;
-                uint8_t b3 = red;
                 // Goal of this logic is to bring out the lowest RGB value
-                minRGBvalue = ((b3 < 0xFF) ? b3 : minRGBvalue); 
-                uint8_t b4 = green;
-                minRGBvalue = ((b4 < minRGBvalue) ? b4 : minRGBvalue); 
-                uint8_t b5 = blue;
-                minRGBvalue = ((b5 < minRGBvalue) ? b5 : minRGBvalue); 
+                minRGBvalue = ((red < 0xFF) ? red : minRGBvalue); 
+                minRGBvalue = ((green < minRGBvalue) ? green : minRGBvalue); 
+                minRGBvalue = ((blue < minRGBvalue) ? blue : minRGBvalue); 
                 // Goal of this logic is to bring out the highest RGB value
-                maxRGBvalue = ((b3 > 0) ? b3 : maxRGBvalue); 
-                maxRGBvalue = ((b4 > maxRGBvalue) ? b4 : maxRGBvalue); 
-                maxRGBvalue = ((b5 > maxRGBvalue) ? b5 : maxRGBvalue); 
+                maxRGBvalue = ((red > 0) ? red : maxRGBvalue); 
+                maxRGBvalue = ((green > maxRGBvalue) ? green : maxRGBvalue); 
+                maxRGBvalue = ((blue > maxRGBvalue) ? blue : maxRGBvalue); 
                 // If difference between the highest and lowest RGB values is 10 or lower, set the white value only
                 if (maxRGBvalue - minRGBvalue <= 10)
                 {
@@ -81,7 +101,7 @@ void NVIDIAFoundersV1Controller::setZone(uint8_t zone, uint8_t mode, NVIDIAFound
             // This controller type requries the brightnessPct gets set to the red LED zone.  Not sure why.
             else if (zoneParams.zones[zone].type == NV_GPU_CLIENT_ILLUM_ZONE_TYPE_SINGLE_COLOR)
             {
-                zoneParams.zones[zone].data.singleColor.data.manualSingleColor.singleColorParams.brightnessPct = zone_config.brightness;
+                zoneParams.zones[zone].data.rgbw.data.manualRGBW.rgbwParams.colorR = zone_config.brightness;
             }
             break;
     }
