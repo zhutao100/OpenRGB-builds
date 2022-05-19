@@ -89,7 +89,9 @@ void NVIDIAIlluminationV1Controller::setZone(uint8_t zone, uint8_t mode, NVIDIAI
                 // If difference between the highest and lowest RGB values is 10 or lower, set the white value only
                 if (maxRGBvalue - minRGBvalue <= 10)
                 {
-                    red, green, blue = 0;
+                    red = 0;
+                    green = 0;
+                    blue = 0;
                     white = (maxRGBvalue + minRGBvalue)/2;
                 }
                 zoneParams.zones[zone].data.rgbw.data.manualRGBW.rgbwParams.colorR = red;
