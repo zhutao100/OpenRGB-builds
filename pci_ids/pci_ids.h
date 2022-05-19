@@ -417,6 +417,7 @@
 | PNY Sub-Device IDs                                    |
 \*-----------------------------------------------------*/
 #define PNY_RTX_3090_XLR8_REVEL_EPIC_X_SUB_DEV          0x136A
+#define PNY_RTX_3060TI_XLR8_REVEL_EPIC_X_SUB_DEV        0x1389
 
 /*-----------------------------------------------------*\
 | Palit Sub-Device IDs                                    |
@@ -459,7 +460,7 @@
 /*-----------------------------------------------------*\
 | Zotac Sub-Device IDs                                  |
 \*-----------------------------------------------------*/
-#define NVIDIA_GTX1070_AMP_EXTREME_SUB_DEV              0x1435
+#define ZOTAC_GTX1070_AMP_EXTREME_SUB_DEV               0x1435
 
 /*---------------------------------------------------------*\
 | PCI ID Macros                                             |
