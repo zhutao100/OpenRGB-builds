@@ -90,6 +90,10 @@ void NVIDIAIlluminationV1Controller::setZone(uint8_t zone, uint8_t mode, NVIDIAI
             {
                 zoneParams.zones[zone].data.colorFixed.data.manualColorFixed.colorFixedParams.brightnessPct = 0;
             }
+            else if (zoneParams.zones[zone].type == NV_GPU_CLIENT_ILLUM_ZONE_TYPE_COLOR_FIXED)
+            {
+                zoneParams.zones[zone].data.rgb.data.manualRGB.rgbParams.colorR = 0;
+            }
             break;
         case NVIDIA_ILLUMINATION_DIRECT:
             zoneParams.zones[zone].ctrlMode = NV_GPU_CLIENT_ILLUM_CTRL_MODE_MANUAL_RGB;
