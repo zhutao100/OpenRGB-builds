@@ -41,7 +41,6 @@ public:
 
     void setZone(uint8_t zone, uint8_t mode, NVIDIAIllumination_Config zone_config);
     std::array<unsigned char, 3> getColor();
-    uint8_t normalizeToPercentage(uint8_t value);
     void getControl();
     void setControl();
     NV_GPU_CLIENT_ILLUM_ZONE_CONTROL_PARAMS zoneParams;
