@@ -59,10 +59,14 @@ void NVIDIAIlluminationV1Controller::setZone(uint8_t zone, uint8_t mode, NVIDIAI
                 zoneParams.zones[zone].data.rgbw.data.manualRGBW.rgbwParams.colorW = 0;
                 zoneParams.zones[zone].data.rgbw.data.manualRGBW.rgbwParams.brightnessPct = 0;
             }
-            // This controller type requries the brightnessPct gets set to the red LED zone.  Not sure why.
+            // These zone types requrie the brightnessPct gets set to the red LED zone.  Not sure why.
             else if (zoneParams.zones[zone].type == NV_GPU_CLIENT_ILLUM_ZONE_TYPE_SINGLE_COLOR)
             {
                 zoneParams.zones[zone].data.rgbw.data.manualRGBW.rgbwParams.colorR = 0;
+            }
+            else if (zoneParams.zones[zone].type == NV_GPU_CLIENT_ILLUM_ZONE_TYPE_COLOR_FIXED)
+            {
+                zoneParams.zones[zone].data.rgb.data.manualRGB.rgbParams.colorR = 0;
             }
             break;
         case NVIDIA_ILLUMINATION_DIRECT:
