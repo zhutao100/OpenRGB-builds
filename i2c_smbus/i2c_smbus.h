@@ -16,7 +16,9 @@
 #include <chrono>
 #include <condition_variable>
 #include <mutex>
+#ifdef _WIN32
 #include <nvapi.h>
+#endif
 
 typedef unsigned char   u8;
 typedef unsigned short  u16;

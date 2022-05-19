@@ -30,11 +30,14 @@ void NVIDIAIlluminationV1Controller::getControl()
     // As far as I can tell, this pre-populates the zone type value, as well as the number of zones
     // able to be controlled, and their existing settings, very useful for extending this controller.
     bus->nvapi_xfer(NVAPI_ZONE_GET_CONTROL, &zoneParams);
+    #endif
 }
 
 void NVIDIAIlluminationV1Controller::setControl()
 {
+    #ifdef _WIN32
     bus->nvapi_xfer(NVAPI_ZONE_SET_CONTROL, &zoneParams);
+    #endif
 }
 
 // This function exists to check if RGB colors are all set to zero, and if so, to take the brightness down 
