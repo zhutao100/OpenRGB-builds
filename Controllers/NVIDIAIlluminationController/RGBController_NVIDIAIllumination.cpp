@@ -137,6 +137,7 @@ void RGBController_NVIDIAIlluminationV1::SetCustomMode()
     active_mode = getModeIndex(NVIDIA_ILLUMINATION_DIRECT);
 }
 
+
 void RGBController_NVIDIAIlluminationV1::DeviceUpdateMode()
 {
     DeviceUpdateLEDs();
