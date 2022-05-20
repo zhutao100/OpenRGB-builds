@@ -8,7 +8,9 @@
 \*-----------------------------------------*/
 
 #include "i2c_smbus.h"
+#ifdef _WIN32
 #include "nvapi.h"
+#endif
 
 #pragma once
 
