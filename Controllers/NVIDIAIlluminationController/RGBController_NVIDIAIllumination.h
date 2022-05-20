@@ -41,6 +41,7 @@ public:
     void ResizeZone(int, int);
 
 private:
+    uint8_t getModeIndex(uint8_t mode_value);
     NVIDIAIlluminationV1Controller* nvidia_illumination;
     std::vector<uint8_t> zoneIndexMap;
 };

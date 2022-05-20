@@ -23,14 +23,14 @@ RGBController_NVIDIAIlluminationV1::RGBController_NVIDIAIlluminationV1(NVIDIAIll
 
     mode Off;
     Off.name       = "Off";
-    Off.value      = 0;
+    Off.value      = NVIDIA_ILLUMINATION_OFF;
     Off.flags      = MODE_FLAG_HAS_PER_LED_COLOR;
-    Off.color_mode = MODE_COLORS_PER_LED;
+    Off.color_mode = MODE_COLORS_NONE;
     modes.push_back(Off);
 
     mode Static;
-    Static.name       = "Static";
-    Static.value      = 1;
+    Static.name       = "Direct";
+    Static.value      = NVIDIA_ILLUMINATION_DIRECT;
     Static.flags      = MODE_FLAG_HAS_BRIGHTNESS | MODE_FLAG_HAS_PER_LED_COLOR;
     Static.color_mode = MODE_COLORS_PER_LED;
     Static.colors_min = 1;
@@ -96,7 +96,6 @@ void RGBController_NVIDIAIlluminationV1::SetupZones()
 
 }
 
-// Gets called from apply all to selection
 void RGBController_NVIDIAIlluminationV1::DeviceUpdateLEDs()
 {
     NVIDIAIllumination_Config nv_zone_config;
@@ -116,14 +115,27 @@ void RGBController_NVIDIAIlluminationV1::UpdateZoneLEDs(int zone)
     nvidia_illumination->setZone(zone, modes[active_mode].value, nv_zone_config);
 }
 
+uint8_t RGBController_NVIDIAIlluminationV1::getModeIndex(uint8_t mode_value)
+{
+    for(uint8_t mode_index = 0; mode_index < modes.size(); mode_index++)
+    {
+        if (modes[mode_index].value == mode_value)
+        {
+            return mode_index;
+        }
+    }
+    return 0;
+}
+
 void RGBController_NVIDIAIlluminationV1::SetCustomMode()
 {
-
+    active_mode = getModeIndex(NVIDIA_ILLUMINATION_DIRECT);
 }
+
 
 void RGBController_NVIDIAIlluminationV1::DeviceUpdateMode()
 {
-
+    DeviceUpdateLEDs();
 }
 
 void RGBController_NVIDIAIlluminationV1::ResizeZone(int zone, int new_size)
