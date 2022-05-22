@@ -11,14 +11,12 @@
 
 #include "RGBController.h"
 #include "NVIDIAIlluminationV1Controller.h"
+#include <map>
 
 #define NVIDIA_FOUNDERS_V1_CONTROLLER_NAME   "NVIDIA_FOUNDERS_V1"
 
-static const char* nvidia_illum_zone_names[] =
-{
-    "Backplate",
-    "Logo"
-};
+
+
 
 class RGBController_NVIDIAIlluminationV1 : public RGBController
 {
@@ -44,4 +42,6 @@ private:
     uint8_t getModeIndex(uint8_t mode_value);
     NVIDIAIlluminationV1Controller* nvidia_illumination;
     std::vector<uint8_t> zoneIndexMap;
+    std::vector<NV_GPU_CLIENT_ILLUM_ZONE_TYPE> zoneTypes;
+    std::map<NV_GPU_CLIENT_ILLUM_ZONE_TYPE, const char *> nvidia_illum_zone_names;
 };

@@ -39,6 +39,9 @@ void NVIDIAIlluminationV1Controller::setControl()
 
 bool NVIDIAIlluminationV1Controller::allZero(std::array<uint8_t, 4> colors)
 {
+    // This function exists to check if RGB colors are all set to zero, and if so, to take the brightness down 
+    // to zero.  This was done to comply with functionality in OpenRGB such as "Lights Off" which sends RGB
+    // values of all zeroes
     std::array<uint8_t, 4> allZeros = {0, 0, 0, 0};
     return colors == allZeros;
 }
@@ -100,7 +103,7 @@ void NVIDIAIlluminationV1Controller::setZone(uint8_t zone, uint8_t mode, NVIDIAI
                 maxRGBvalue = ((red > 0) ? red : maxRGBvalue); 
                 maxRGBvalue = ((green > maxRGBvalue) ? green : maxRGBvalue); 
                 maxRGBvalue = ((blue > maxRGBvalue) ? blue : maxRGBvalue); 
-                // If difference between the highest and lowest RGB values is 10 or lower, set the white value only
+                // If difference between the highest and lowest RGB values is 10 or lower, set the white value only, zero out the rest
                 if (maxRGBvalue - minRGBvalue <= 10)
                 {
                     red = 0;
@@ -140,4 +143,16 @@ std::array<unsigned char, 3> NVIDIAIlluminationV1Controller::getColor()
     unsigned char blue = (unsigned char)zoneParams.zones[0].data.rgb.data.manualRGB.rgbParams.colorB;
 
     return {red, green, blue};
+}
+
+
+std::vector<NV_GPU_CLIENT_ILLUM_ZONE_TYPE> NVIDIAIlluminationV1Controller::getInfo()
+{
+    std::vector<NV_GPU_CLIENT_ILLUM_ZONE_TYPE> zoneTypes;
+    getControl();
+    for (unsigned int i = 0; i < zoneParams.numIllumZonesControl; i++)
+    {
+        zoneTypes.push_back(zoneParams.zones[i].type);
+    }
+    return zoneTypes;
 }

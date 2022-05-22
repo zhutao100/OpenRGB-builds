@@ -24,7 +24,6 @@ RGBController_NVIDIAIlluminationV1::RGBController_NVIDIAIlluminationV1(NVIDIAIll
     mode Off;
     Off.name       = "Off";
     Off.value      = NVIDIA_ILLUMINATION_OFF;
-    Off.flags      = MODE_FLAG_HAS_PER_LED_COLOR;
     Off.color_mode = MODE_COLORS_NONE;
     modes.push_back(Off);
 
@@ -64,27 +63,25 @@ void RGBController_NVIDIAIlluminationV1::UpdateSingleLED(int)
 
 void RGBController_NVIDIAIlluminationV1::SetupZones()
 {
-    /*---------------------------------------------------------*\
-    | This device only allows setting the entire zone for all   |
-    | LED's in the zone and does not allow per LED control.     |
-    \*---------------------------------------------------------*/
-
-    // The founders' cards have two zones, the V-shaped area and the logo.
-    // The logo doesn't have color control, only brightness, it has not been
-    // attempted to control per-LED on this card
-    for(uint8_t zone_idx = 0; zone_idx < 2; zone_idx++)
+    // Use the NvAPI to gather existing zones on the card and their capabilities, 
+    // populate available zones accordingly.
+    zoneTypes = nvidia_illumination->getInfo();
+    nvidia_illum_zone_names[NV_GPU_CLIENT_ILLUM_ZONE_TYPE_RGB] = "RGB";
+    nvidia_illum_zone_names[NV_GPU_CLIENT_ILLUM_ZONE_TYPE_RGBW] = "RGB";
+    nvidia_illum_zone_names[NV_GPU_CLIENT_ILLUM_ZONE_TYPE_COLOR_FIXED] = "FIXED COLOR";
+    nvidia_illum_zone_names[NV_GPU_CLIENT_ILLUM_ZONE_TYPE_SINGLE_COLOR] = "SINGLE COLOR";
+    for(uint8_t zone_idx = 0; zone_idx < zoneTypes.size(); zone_idx++)
     {
         zone* new_zone = new zone();
         led*  new_led  = new led();
 
-        new_zone->name          = nvidia_illum_zone_names[zone_idx];
+        new_zone->name          = std::to_string(zone_idx) + " - " + (std::string)nvidia_illum_zone_names[zoneTypes[zone_idx]];
         new_zone->type          = ZONE_TYPE_SINGLE;
         new_zone->leds_min      = 1;
         new_zone->leds_max      = 1;
         new_zone->leds_count    = 1;
         new_zone->matrix_map    = NULL;
-
-        new_led->name           = nvidia_illum_zone_names[zone_idx];
+        new_led->name           = "Entire Zone";
         /*---------------------------------------------------------*\
         | Push the zone and LED on to device vectors                |
         \*---------------------------------------------------------*/
