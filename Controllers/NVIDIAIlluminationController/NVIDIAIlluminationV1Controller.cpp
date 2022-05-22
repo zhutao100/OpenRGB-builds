@@ -45,6 +45,9 @@ void NVIDIAIlluminationV1Controller::setControl()
 // values of all zeroes, but doesn't seem to send a brightness of zero.
 bool NVIDIAIlluminationV1Controller::allZero(std::array<uint8_t, 4> colors)
 {
+    // This function exists to check if RGB colors are all set to zero, and if so, to take the brightness down 
+    // to zero.  This was done to comply with functionality in OpenRGB such as "Lights Off" which sends RGB
+    // values of all zeroes
     std::array<uint8_t, 4> allZeros = {0, 0, 0, 0};
     return colors == allZeros;
 }
