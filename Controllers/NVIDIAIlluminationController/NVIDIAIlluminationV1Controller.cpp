@@ -24,7 +24,8 @@ void NVIDIAIlluminationV1Controller::getControl()
     // Hardcoded value found via sniffing
     zoneParams.version = 72012;
     zoneParams.bDefault = 0;
-    // As far as I can tell, this pre-populates the zone type value!
+    // As far as I can tell, this pre-populates the zone type value, as well as the number of zones
+    // able to be controlled, and their existing settings.
     #ifdef _WIN32
     bus->nvapi_xfer(NVAPI_ZONE_GET_CONTROL, &zoneParams);
     #endif
@@ -134,10 +135,7 @@ void NVIDIAIlluminationV1Controller::setZone(uint8_t zone, uint8_t mode, NVIDIAI
 
 std::array<unsigned char, 3> NVIDIAIlluminationV1Controller::getColor()
 {
-    #ifdef _WIN32
-    bus->nvapi_xfer(NVAPI_ZONE_GET_CONTROL, &zoneParams);
-    #endif
-
+    getControl();
     unsigned char red = (unsigned char)zoneParams.zones[0].data.rgb.data.manualRGB.rgbParams.colorR;
     unsigned char green = (unsigned char)zoneParams.zones[0].data.rgb.data.manualRGB.rgbParams.colorG;
     unsigned char blue = (unsigned char)zoneParams.zones[0].data.rgb.data.manualRGB.rgbParams.colorB;
