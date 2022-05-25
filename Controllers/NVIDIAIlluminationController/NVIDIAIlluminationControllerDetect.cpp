@@ -77,10 +77,15 @@ void DetectNVIDIAIlluminationGPUControllers(std::vector<i2c_smbus_interface*>& b
                             RGBController_NVIDIAIlluminationV1* new_rgbcontroller;
 
                             // TODO: Slap a QueryIllumSupport if statement around this, maybe?
+                            LOG_DEBUG("Creating Illumination controller...");
                             new_controller          = new NVIDIAIlluminationV1Controller(busses[bus]);
+                            LOG_DEBUG("Creating RGB controller...");
                             new_rgbcontroller       = new RGBController_NVIDIAIlluminationV1(new_controller);
+                            LOG_DEBUG("Setting name to device list by index...");
                             new_rgbcontroller->name = device_list[dev_idx].name;
+                            LOG_DEBUG("Regsitering controller via resource manager...");
                             ResourceManager::get()->RegisterRGBController(new_rgbcontroller);
+                            LOG_DEBUG("Past Resource Manager get call...");
                         }
                         break;
                 }
