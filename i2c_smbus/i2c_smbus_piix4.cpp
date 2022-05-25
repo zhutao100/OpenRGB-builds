@@ -228,11 +228,12 @@ s32 i2c_smbus_piix4::i2c_xfer(u8 addr, char read_write, int* size, u8* data)
 {
     return -1;
 }
-
+#ifdef _WIN32
 s32 i2c_smbus_piix4::nvapi_xfer(char nvapi_call, NV_GPU_CLIENT_ILLUM_ZONE_CONTROL_PARAMS* zone_control_struct)
 {
     return -1;
 }
+#endif
 
 #include "Detector.h"
 #include "wmi.h"
