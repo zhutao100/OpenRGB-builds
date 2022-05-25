@@ -1,3 +1,4 @@
+#ifdef _WIN32
 /*-----------------------------------------*\
 |  NVIDIAIlluminationV1Controller.h         |
 |                                           |
