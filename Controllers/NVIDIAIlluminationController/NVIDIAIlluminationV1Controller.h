@@ -1,3 +1,4 @@
+#ifdef _WIN32
 /*-----------------------------------------*\
 |  NVIDIAIlluminationV1Controller.h         |
 |                                           |
@@ -49,3 +50,4 @@ public:
 private:
     i2c_smbus_interface* bus;
 };
+#endif

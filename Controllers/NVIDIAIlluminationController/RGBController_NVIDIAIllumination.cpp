@@ -1,3 +1,4 @@
+#ifdef _WIN32
 /*-----------------------------------------*\
 |  RGBController_NVIDIAIllumination.cpp     |
 |                                           |
@@ -139,3 +140,4 @@ void RGBController_NVIDIAIlluminationV1::ResizeZone(int zone, int new_size)
 {
 
 }
+#endif

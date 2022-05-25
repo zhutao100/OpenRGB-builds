@@ -1,3 +1,4 @@
+#ifdef _WIN32
 /*-----------------------------------------*\
 |  NVIDIAIlluminationV1Controller.cpp           |
 |                                           |
@@ -152,3 +153,4 @@ std::vector<NV_GPU_CLIENT_ILLUM_ZONE_TYPE> NVIDIAIlluminationV1Controller::getIn
     }
     return zoneTypes;
 }
+#endif

@@ -1,3 +1,4 @@
+#ifdef _WIN32
 #include "Detector.h"
 
 #include "LogManager.h"
@@ -36,9 +37,10 @@ static const gpu_pci_device device_list[] =
 };
 /******************************************************************************************\
 *                                                                                          *
-*   DetectNVIDIAIlluminationGPUControllers                                                  *
+*   DetectNVIDIAIlluminationGPUControllers                                                 *
 *                                                                                          *
-*       Detect NVIDIA ILLUMINATION GPU controllers for you use NvAPI                       *
+*       Detect NVIDIA ILLUMINATION GPU controllers that use direct NvAPI Illumination      *
+*       calls                                                                              *
 *                                                                                          *
 *           bus - pointer to i2c_smbus_interface where NVIDIA ILLUMINATION GPU device      *
 *                 is connected                                                             *
@@ -48,10 +50,13 @@ static const gpu_pci_device device_list[] =
 
 void DetectNVIDIAIlluminationGPUControllers(std::vector<i2c_smbus_interface*>& busses)
 {
+    LOG_DEBUG("Entered detection function.");
     for (unsigned int bus = 0; bus < busses.size(); bus++)
     {
+        LOG_DEBUG("Inside outer for loop.");
         for(unsigned int dev_idx = 0; dev_idx < GPU_NUM_DEVICES; dev_idx++)
         {
+            LOG_DEBUG("Inside inner for loop.");
             if (busses[bus]->port_id != 1)
             {
                 break;
@@ -62,15 +67,16 @@ void DetectNVIDIAIlluminationGPUControllers(std::vector<i2c_smbus_interface*>& b
                busses[bus]->pci_subsystem_vendor == device_list[dev_idx].pci_subsystem_vendor &&
                busses[bus]->pci_subsystem_device == device_list[dev_idx].pci_subsystem_device)
             {
+                LOG_DEBUG("Outside switch statement.");
                 switch(device_list[dev_idx].gpu_rgb_version)
                 {
                     case NVIDIA_ILLUMINATION_V1:
                         {
-                            LOG_DEBUG(GPU_DETECT_MESSAGE, NVIDIA_ILLUMINATION_V1_CONTROLLER_NAME, bus, device_list[dev_idx].pci_device, device_list[dev_idx].pci_subsystem_device, device_list[dev_idx].name );
+                            LOG_DEBUG(GPU_DETECT_MESSAGE, NVIDIA_ILLUMINATION_V1_CONTROLLER_NAME, bus, device_list[dev_idx].pci_device, device_list[dev_idx].pci_subsystem_device, device_list[dev_idx].name);
                             NVIDIAIlluminationV1Controller*     new_controller;
                             RGBController_NVIDIAIlluminationV1* new_rgbcontroller;
 
-                            // TODO: Slap a QueryIllumSupport if statement around this
+                            // TODO: Slap a QueryIllumSupport if statement around this, maybe?
                             new_controller          = new NVIDIAIlluminationV1Controller(busses[bus]);
                             new_rgbcontroller       = new RGBController_NVIDIAIlluminationV1(new_controller);
                             new_rgbcontroller->name = device_list[dev_idx].name;
@@ -83,4 +89,5 @@ void DetectNVIDIAIlluminationGPUControllers(std::vector<i2c_smbus_interface*>& b
     }
 }   /* DetectNVIDIAGPUControllers() */
 
-REGISTER_I2C_DETECTOR("NVIDIA FOUNDERS GPU", DetectNVIDIAIlluminationGPUControllers);
+REGISTER_I2C_DETECTOR("NVIDIA ILLUMINATION GPU", DetectNVIDIAIlluminationGPUControllers);
+#endif

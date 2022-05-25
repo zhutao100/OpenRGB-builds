@@ -1,3 +1,4 @@
+#ifdef _WIN32
 /*-----------------------------------------*\
 |  RGBController_NVIDIAIllumination.h       |
 |                                           |
@@ -45,3 +46,4 @@ private:
     std::vector<NV_GPU_CLIENT_ILLUM_ZONE_TYPE> zoneTypes;
     std::map<NV_GPU_CLIENT_ILLUM_ZONE_TYPE, const char *> nvidia_illum_zone_names;
 };
+#endif
