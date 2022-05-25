@@ -204,6 +204,7 @@ s32 i2c_smbus_nct6775::nvapi_xfer(char nvapi_call, NV_GPU_CLIENT_ILLUM_ZONE_CONT
 {
     return -1;
 }
+#endif
 
 #include "Detector.h"
 #include "super_io.h"
