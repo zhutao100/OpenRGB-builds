@@ -8,7 +8,6 @@
 \*-----------------------------------------*/
 
 #include "NVIDIAIlluminationV1Controller.h"
-#include "LogManager.h"
 
 NVIDIAIlluminationV1Controller::NVIDIAIlluminationV1Controller(i2c_smbus_interface* bus_ptr)
 {

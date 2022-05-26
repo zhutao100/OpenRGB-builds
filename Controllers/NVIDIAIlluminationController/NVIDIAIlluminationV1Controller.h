@@ -13,6 +13,7 @@
 #include "i2c_smbus.h"
 #include "i2c_smbus_nvapi.h"
 #include "RGBController.h"
+#include "LogManager.h"
 #include <vector>
 
 #include <cstring>
