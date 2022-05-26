@@ -42,7 +42,7 @@ public:
 
     void setZone(uint8_t zone, uint8_t mode, NVIDIAIllumination_Config zone_config);
     bool allZero(std::array<uint8_t, 4> colors);
-    std::array<unsigned char, 3> getColor();
+    void getColor();
     std::vector<NV_GPU_CLIENT_ILLUM_ZONE_TYPE> getInfo();
     void getControl();
     void setControl();

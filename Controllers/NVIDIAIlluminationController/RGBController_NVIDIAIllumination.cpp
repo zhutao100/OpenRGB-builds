@@ -48,10 +48,12 @@ RGBController_NVIDIAIlluminationV1::RGBController_NVIDIAIlluminationV1(NVIDIAIll
     // unsigned char raw_active_mode = nvidia_founders[0]->GetMode();
 
     LOG_DEBUG("Retrieving stored color...");
-    for(uint8_t zone_idx = 0; zone_idx < 2; zone_idx++)
+    nvidia_illumination->getColor();
+    for (unsigned int i = 0; i < nvidia_illumination->zoneParams.numIllumZonesControl; i++)
     {
-        std::array<unsigned char, 3> rgb = nvidia_illumination->getColor();
-        zones[zone_idx].colors[0] = ToRGBColor(rgb[0], rgb[1], rgb[2]);
+        zones[i].colors[0] = ToRGBColor(nvidia_illumination->zoneParams.zones[i].data.rgb.data.manualRGB.rgbParams.colorR, 
+        nvidia_illumination->zoneParams.zones[i].data.rgb.data.manualRGB.rgbParams.colorG, 
+        nvidia_illumination->zoneParams.zones[i].data.rgb.data.manualRGB.rgbParams.colorB);
     }
 }
 
