@@ -291,6 +291,7 @@
 \*-----------------------------------------------------*/
 #define GAINWARD_GTX_1080_PHOENIX                       0x1B80
 #define GAINWARD_GTX_1080_TI_PHOENIX                    0x1B06
+#define GAINWARD_RTX_3060TI_GHOST_SUB_DEV               0x2489
 
 /*-----------------------------------------------------*\
 | GALAX / KFA2 Sub-Device IDs                           |
