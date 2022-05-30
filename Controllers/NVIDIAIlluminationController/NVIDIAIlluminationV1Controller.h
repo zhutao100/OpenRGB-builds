@@ -1,13 +1,14 @@
-#ifdef _WIN32
 /*-----------------------------------------*\
 |  NVIDIAIlluminationV1Controller.h         |
 |                                           |
 |  Definitions and types for direct NVIDIA  |
-|  Illumination-based Nvidia GPUs' RGB      |
+|  Illumination-based NVIDIA GPUs' RGB      |
 |  controller                               |
 |                                           |
-|  Carter Miller (GingerRunner) 1/04/2022   |
+|  Carter Miller (GingerRunner) 1/4/2022    |
 \*-----------------------------------------*/
+
+#ifdef _WIN32
 
 #include <string>
 #include "i2c_smbus.h"
@@ -36,19 +37,19 @@ enum
 
 class NVIDIAIlluminationV1Controller
 {
-public:
-    NVIDIAIlluminationV1Controller(i2c_smbus_interface* bus);
-    ~NVIDIAIlluminationV1Controller();
+    public:
+        NVIDIAIlluminationV1Controller(i2c_smbus_interface* bus);
+        ~NVIDIAIlluminationV1Controller();
 
-    void setZone(uint8_t zone, uint8_t mode, NVIDIAIllumination_Config zone_config);
-    bool allZero(std::array<uint8_t, 4> colors);
-    void getColor();
-    std::vector<NV_GPU_CLIENT_ILLUM_ZONE_TYPE> getInfo();
-    void getControl();
-    void setControl();
-    NV_GPU_CLIENT_ILLUM_ZONE_CONTROL_PARAMS zoneParams;
+        void setZone(uint8_t zone, uint8_t mode, NVIDIAIllumination_Config zone_config);
+        bool allZero(std::array<uint8_t, 4> colors);
+        void getColor();
+        std::vector<NV_GPU_CLIENT_ILLUM_ZONE_TYPE> getInfo();
+        void getControl();
+        void setControl();
+        NV_GPU_CLIENT_ILLUM_ZONE_CONTROL_PARAMS zoneParams;
 
-private:
-    i2c_smbus_interface* bus;
+    private:
+        i2c_smbus_interface* bus;
 };
 #endif

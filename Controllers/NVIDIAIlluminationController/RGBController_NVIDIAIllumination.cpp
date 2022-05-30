@@ -1,12 +1,12 @@
 #ifdef _WIN32
-/*-----------------------------------------*\
-|  RGBController_NVIDIAIllumination.cpp     |
-|                                           |
-|  Generic RGB Interface for OpenRGB direct |
-|  NVIDIA Illumination based Nvidia GPUs.   |
-|                                           |
-|  Carter Miller (GingerRunner) 1/04/2022   |
-\*-----------------------------------------*/
+/*--------------------------------------------*\
+|  RGBController_NVIDIAIllumination.cpp        |
+|                                              |
+|  Generic RGB Interface for OpenRGB direct    |
+|  NVIDIA Illumination controller NVIDIA GPUs. |
+|                                              |
+|  Carter Miller (GingerRunner) 1/4/2022       |
+\*--------------------------------------------*/
 
 #include "RGBController_NVIDIAIllumination.h"
 #include "NVIDIAIlluminationV1Controller.h"
@@ -41,13 +41,13 @@ RGBController_NVIDIAIlluminationV1::RGBController_NVIDIAIlluminationV1(NVIDIAIll
     Static.brightness_max = 100;
     modes.push_back(Static);
 
-    LOG_DEBUG("Setting up Zones...");
+    //LOG_DEBUG("Setting up Zones...");
     SetupZones();
 
     // Initialize active mode and stored color
     // unsigned char raw_active_mode = nvidia_founders[0]->GetMode();
 
-    LOG_DEBUG("Retrieving stored color...");
+    //LOG_DEBUG("Retrieving stored color...");
     nvidia_illumination->getColor();
     for (unsigned int i = 0; i < nvidia_illumination->zoneParams.numIllumZonesControl; i++)
     {
@@ -71,14 +71,14 @@ void RGBController_NVIDIAIlluminationV1::SetupZones()
 {
     // Use the NvAPI to gather existing zones on the card and their capabilities, 
     // populate available zones accordingly.
-    LOG_DEBUG("Calling get info...");
+    //LOG_DEBUG("Calling get info...");
     zoneTypes = nvidia_illumination->getInfo();
-    LOG_DEBUG("Info retrieved!");
+    //LOG_DEBUG("Info retrieved!");
     nvidia_illum_zone_names[NV_GPU_CLIENT_ILLUM_ZONE_TYPE_RGB] = "RGB";
     nvidia_illum_zone_names[NV_GPU_CLIENT_ILLUM_ZONE_TYPE_RGBW] = "RGB";
     nvidia_illum_zone_names[NV_GPU_CLIENT_ILLUM_ZONE_TYPE_COLOR_FIXED] = "FIXED COLOR";
     nvidia_illum_zone_names[NV_GPU_CLIENT_ILLUM_ZONE_TYPE_SINGLE_COLOR] = "SINGLE COLOR";
-    LOG_DEBUG("Starting zone for loop...");
+    //LOG_DEBUG("Starting zone for loop...");
     for(uint8_t zone_idx = 0; zone_idx < zoneTypes.size(); zone_idx++)
     {
         zone* new_zone = new zone();
@@ -91,14 +91,12 @@ void RGBController_NVIDIAIlluminationV1::SetupZones()
         new_zone->leds_count    = 1;
         new_zone->matrix_map    = NULL;
         new_led->name           = "Entire Zone";
-        /*---------------------------------------------------------*\
-        | Push the zone and LED on to device vectors                |
-        \*---------------------------------------------------------*/
+        //Push the zone and LED on to device vectors 
         leds.push_back(*new_led);
         zones.push_back(*new_zone);
         zoneIndexMap.push_back(zone_idx);
     }
-    LOG_DEBUG("Setting up colors...");
+    //LOG_DEBUG("Setting up colors...");
     SetupColors();
 
 }
@@ -138,7 +136,6 @@ void RGBController_NVIDIAIlluminationV1::SetCustomMode()
 {
     active_mode = getModeIndex(NVIDIA_ILLUMINATION_DIRECT);
 }
-
 
 void RGBController_NVIDIAIlluminationV1::DeviceUpdateMode()
 {

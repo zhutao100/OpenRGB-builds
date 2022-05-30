@@ -1,11 +1,11 @@
+/*-----------------------------------------------*\
+|  NVIDIAIlluminationV1Controller.cpp             |
+|                                                 |
+|  Driver for NVIDIA Illumination controlled GPUS |
+|                                                 |
+|  Carter Miller (GingerRunner) 1/5/2022          |
+\*-----------------------------------------------*/
 #ifdef _WIN32
-/*-----------------------------------------*\
-|  NVIDIAIlluminationV1Controller.cpp           |
-|                                           |
-|  Driver for NVIDIA Founders GPUs          |
-|                                           |
-|  Carter Miller (GingerRunner) 1/5/2022    |
-\*-----------------------------------------*/
 
 #include "NVIDIAIlluminationV1Controller.h"
 
@@ -21,11 +21,13 @@ NVIDIAIlluminationV1Controller::~NVIDIAIlluminationV1Controller()
 void NVIDIAIlluminationV1Controller::getControl()
 {
     std::memset(&zoneParams, 0, sizeof(zoneParams));
-    // Hardcoded value found via sniffing
+    // Hardcoded value found via sniffing, this may be different for other cards, once that is 
+    // found, may be best to simply if/else this based on the card detected or map it out in the detector and 
+    // then pass via constructor to here?
     zoneParams.version = 72012;
     zoneParams.bDefault = 0;
     // As far as I can tell, this pre-populates the zone type value, as well as the number of zones
-    // able to be controlled, and their existing settings.
+    // able to be controlled, and their existing settings, very useful for extending this controller.
     bus->nvapi_xfer(NVAPI_ZONE_GET_CONTROL, &zoneParams);
 }
 
@@ -34,11 +36,11 @@ void NVIDIAIlluminationV1Controller::setControl()
     bus->nvapi_xfer(NVAPI_ZONE_SET_CONTROL, &zoneParams);
 }
 
+// This function exists to check if RGB colors are all set to zero, and if so, to take the brightness down 
+// to zero.  This was done to comply with functionality in OpenRGB such as "Lights Off" which sends RGB
+// values of all zeroes, but doesn't seem to send a brightness of zero.
 bool NVIDIAIlluminationV1Controller::allZero(std::array<uint8_t, 4> colors)
 {
-    // This function exists to check if RGB colors are all set to zero, and if so, to take the brightness down 
-    // to zero.  This was done to comply with functionality in OpenRGB such as "Lights Off" which sends RGB
-    // values of all zeroes
     std::array<uint8_t, 4> allZeros = {0, 0, 0, 0};
     return colors == allZeros;
 }
@@ -99,7 +101,8 @@ void NVIDIAIlluminationV1Controller::setZone(uint8_t zone, uint8_t mode, NVIDIAI
                 maxRGBvalue = ((red > 0) ? red : maxRGBvalue); 
                 maxRGBvalue = ((green > maxRGBvalue) ? green : maxRGBvalue); 
                 maxRGBvalue = ((blue > maxRGBvalue) ? blue : maxRGBvalue); 
-                // If difference between the highest and lowest RGB values is 10 or lower, set the white value only, zero out the rest
+                // If difference between the highest and lowest RGB values is 10 or lower, set the white value only,
+                // zero out the rest, this logic was found via tedious examination 
                 if (maxRGBvalue - minRGBvalue <= 10)
                 {
                     red = 0;
