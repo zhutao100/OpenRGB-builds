@@ -1,4 +1,3 @@
-#ifdef _WIN32
 /*-----------------------------------------*\
 |  RGBController_NVIDIAIllumination.h       |
 |                                           |
