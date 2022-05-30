@@ -1,4 +1,3 @@
-#ifdef _WIN32
 /*--------------------------------------------*\
 |  RGBController_NVIDIAIllumination.cpp        |
 |                                              |
@@ -7,6 +6,7 @@
 |                                              |
 |  Carter Miller (GingerRunner) 1/4/2022       |
 \*--------------------------------------------*/
+#ifdef _WIN32
 
 #include "RGBController_NVIDIAIllumination.h"
 #include "NVIDIAIlluminationV1Controller.h"
@@ -14,7 +14,7 @@
 
 RGBController_NVIDIAIlluminationV1::RGBController_NVIDIAIlluminationV1(NVIDIAIlluminationV1Controller* nvidia_illumination_ptr)
 {
-    LOG_DEBUG("Entering RGB Controller Constructor");
+    //LOG_DEBUG("Entering RGB Controller Constructor");
     nvidia_illumination = nvidia_illumination_ptr;
 
     name        = "NVIDIA Illumination GPU";
