@@ -99,11 +99,7 @@ void NVIDIAIlluminationV1Controller::setZone(uint8_t zone, uint8_t mode, NVIDIAI
             }
             else if (zoneParams.zones[zone].type == NV_GPU_CLIENT_ILLUM_ZONE_TYPE_RGBW)
             {
-                if(_treats_rgbw_as_rgb)
-                {
-                    setZoneRGB(zone, 0, 0, 0, 0);
-                }
-                else
+                if(!_treats_rgbw_as_rgb)
                 {
                     uint8_t minRGBvalue = 0xFF; 
                     uint8_t maxRGBvalue = 0;
@@ -124,8 +120,8 @@ void NVIDIAIlluminationV1Controller::setZone(uint8_t zone, uint8_t mode, NVIDIAI
                         blue = 0;
                         white = (maxRGBvalue + minRGBvalue)/2;
                     }
-                    setZoneRGBW(zone, red, green, blue, white, zone_config.brightness);
                 }
+                setZoneRGBW(zone, red, green, blue, white, zone_config.brightness);
             }
             else if (zoneParams.zones[zone].type == NV_GPU_CLIENT_ILLUM_ZONE_TYPE_SINGLE_COLOR)
             {
