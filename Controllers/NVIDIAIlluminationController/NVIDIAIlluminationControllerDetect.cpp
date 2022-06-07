@@ -39,10 +39,11 @@ typedef struct
 
 static const gpu_pci_device device_list[] =
 {
-    {NVIDIA_VEN,   NVIDIA_RTX2070S_DEV,        NVIDIA_VEN,        NVIDIA_RTX2070_FE_SUPER_SUB_DEV,             NVIDIA_ILLUMINATION_V1,    "2070FE SUPER"            },
-    {NVIDIA_VEN,   NVIDIA_RTX3060TI_LHR_DEV,   PNY_SUB_VEN,       PNY_RTX_3060TI_XLR8_REVEL_EPIC_X_SUB_DEV,    NVIDIA_ILLUMINATION_V1,    "3060TI XLR8 REVEL EPIC-X"},
-    {NVIDIA_VEN,   NVIDIA_RTX3060TI_LHR_DEV,   NVIDIA_VEN,        GAINWARD_RTX_3060TI_GHOST_SUB_DEV,           NVIDIA_ILLUMINATION_V1,    "3060TI GHOST"            },
-    {NVIDIA_VEN,   NVIDIA_RTX3080_DEV,         NVIDIA_VEN,        NVIDIA_RTX3080_FE_NON_LHR_SUB_DEV,           NVIDIA_ILLUMINATION_V1,    "3080FE Non-LHR"          },
+    {NVIDIA_VEN,   NVIDIA_RTX2070S_DEV,          NVIDIA_VEN,        NVIDIA_RTX2070_FE_SUPER_SUB_DEV,             NVIDIA_ILLUMINATION_V1,    "2070FE SUPER"            },
+    {NVIDIA_VEN,   NVIDIA_RTX3060TI_LHR_DEV,     PNY_SUB_VEN,       PNY_RTX_3060TI_XLR8_REVEL_EPIC_X_SUB_DEV,    NVIDIA_ILLUMINATION_V1,    "3060TI XLR8 REVEL EPIC-X"},
+    {NVIDIA_VEN,   NVIDIA_RTX3060TI_V1_LHR_DEV,  NVIDIA_VEN,        PALIT_RTX3060TI_V1_LHR_DEV,                  NVIDIA_ILLUMINATION_V1,    "3060TI DUAL V1"          },
+    {NVIDIA_VEN,   NVIDIA_RTX3060TI_LHR_DEV,     NVIDIA_VEN,        GAINWARD_RTX_3060TI_GHOST_SUB_DEV,           NVIDIA_ILLUMINATION_V1,    "3060TI GHOST"            },
+    {NVIDIA_VEN,   NVIDIA_RTX3080_DEV,           NVIDIA_VEN,        NVIDIA_RTX3080_FE_NON_LHR_SUB_DEV,           NVIDIA_ILLUMINATION_V1,    "3080FE Non-LHR"          },
 };
 /******************************************************************************************\
 *                                                                                          *
