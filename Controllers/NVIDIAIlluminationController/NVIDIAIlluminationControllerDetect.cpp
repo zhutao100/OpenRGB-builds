@@ -32,18 +32,22 @@ typedef struct
     int             pci_subsystem_vendor;
     int             pci_subsystem_device;
     int             gpu_rgb_version;
+    bool            treats_rgbw_as_rgb;
     const char *    name;
 } gpu_pci_device;
 
 #define GPU_NUM_DEVICES (sizeof(device_list) / sizeof(device_list[ 0 ]))
 
+#define TREATS_RGBW_AS_RGB  true
+#define TREATS_RGBW_AS_RGBW false
+
 static const gpu_pci_device device_list[] =
 {
-    {NVIDIA_VEN,   NVIDIA_RTX2070S_DEV,          NVIDIA_VEN,        NVIDIA_RTX2070_FE_SUPER_SUB_DEV,             NVIDIA_ILLUMINATION_V1,    "2070FE SUPER"            },
-    {NVIDIA_VEN,   NVIDIA_RTX3060TI_LHR_DEV,     PNY_SUB_VEN,       PNY_RTX_3060TI_XLR8_REVEL_EPIC_X_SUB_DEV,    NVIDIA_ILLUMINATION_V1,    "3060TI XLR8 REVEL EPIC-X"},
-    {NVIDIA_VEN,   NVIDIA_RTX3060TI_V1_LHR_DEV,  NVIDIA_VEN,        PALIT_RTX3060TI_V1_LHR_DEV,                  NVIDIA_ILLUMINATION_V1,    "3060TI DUAL V1"          },
-    {NVIDIA_VEN,   NVIDIA_RTX3060TI_LHR_DEV,     NVIDIA_VEN,        GAINWARD_RTX_3060TI_GHOST_SUB_DEV,           NVIDIA_ILLUMINATION_V1,    "3060TI GHOST"            },
-    {NVIDIA_VEN,   NVIDIA_RTX3080_DEV,           NVIDIA_VEN,        NVIDIA_RTX3080_FE_NON_LHR_SUB_DEV,           NVIDIA_ILLUMINATION_V1,    "3080FE Non-LHR"          },
+    {NVIDIA_VEN,   NVIDIA_RTX2070S_DEV,          NVIDIA_VEN,        NVIDIA_RTX2070_FE_SUPER_SUB_DEV,             NVIDIA_ILLUMINATION_V1,    TREATS_RGBW_AS_RGBW,   "2070FE SUPER"            },
+    {NVIDIA_VEN,   NVIDIA_RTX3060TI_LHR_DEV,     PNY_SUB_VEN,       PNY_RTX_3060TI_XLR8_REVEL_EPIC_X_SUB_DEV,    NVIDIA_ILLUMINATION_V1,    TREATS_RGBW_AS_RGBW,   "3060TI XLR8 REVEL EPIC-X"},
+    {NVIDIA_VEN,   NVIDIA_RTX3060TI_V1_LHR_DEV,  NVIDIA_VEN,        PALIT_RTX3060TI_V1_LHR_DEV,                  NVIDIA_ILLUMINATION_V1,    TREATS_RGBW_AS_RGB,    "3060TI DUAL V1"          },
+    {NVIDIA_VEN,   NVIDIA_RTX3060TI_LHR_DEV,     NVIDIA_VEN,        GAINWARD_RTX_3060TI_GHOST_SUB_DEV,           NVIDIA_ILLUMINATION_V1,    TREATS_RGBW_AS_RGB,    "3060TI GHOST"            },
+    {NVIDIA_VEN,   NVIDIA_RTX3080_DEV,           NVIDIA_VEN,        NVIDIA_RTX3080_FE_NON_LHR_SUB_DEV,           NVIDIA_ILLUMINATION_V1,    TREATS_RGBW_AS_RGBW,   "3080FE NON-LHR"          },
 };
 /******************************************************************************************\
 *                                                                                          *
@@ -85,7 +89,7 @@ void DetectNVIDIAIlluminationGPUControllers(std::vector<i2c_smbus_interface*>& b
 
                             // TODO: Slap a QueryIllumSupport if statement around this, maybe?
                             //LOG_DEBUG("Creating Illumination controller...");
-                            new_controller          = new NVIDIAIlluminationV1Controller(busses[bus]);
+                            new_controller          = new NVIDIAIlluminationV1Controller(busses[bus], device_list[dev_idx].treats_rgbw_as_rgb);
                             //LOG_DEBUG("Creating RGB controller...");
                             new_rgbcontroller       = new RGBController_NVIDIAIlluminationV1(new_controller);
                             //LOG_DEBUG("Setting name to device list by index...");

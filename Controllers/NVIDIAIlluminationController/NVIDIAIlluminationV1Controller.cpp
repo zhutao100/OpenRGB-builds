@@ -9,9 +9,10 @@
 
 #include "NVIDIAIlluminationV1Controller.h"
 
-NVIDIAIlluminationV1Controller::NVIDIAIlluminationV1Controller(i2c_smbus_interface* bus_ptr)
+NVIDIAIlluminationV1Controller::NVIDIAIlluminationV1Controller(i2c_smbus_interface* bus_ptr, bool treats_rgbw_as_rgb)
 {
     bus = bus_ptr;
+    _treats_rgbw_as_rgb = treats_rgbw_as_rgb;
 }
 
 NVIDIAIlluminationV1Controller::~NVIDIAIlluminationV1Controller()
@@ -45,6 +46,23 @@ bool NVIDIAIlluminationV1Controller::allZero(std::array<uint8_t, 4> colors)
     return colors == allZeros;
 }
 
+void NVIDIAIlluminationV1Controller::setZoneRGBW(uint8_t zone, uint8_t red, uint8_t green, uint8_t blue, uint8_t white, uint8_t brightness)
+{
+    zoneParams.zones[zone].data.rgbw.data.manualRGBW.rgbwParams.colorR = red;
+    zoneParams.zones[zone].data.rgbw.data.manualRGBW.rgbwParams.colorG = green;
+    zoneParams.zones[zone].data.rgbw.data.manualRGBW.rgbwParams.colorB = blue;
+    zoneParams.zones[zone].data.rgbw.data.manualRGBW.rgbwParams.colorW = white;
+    zoneParams.zones[zone].data.rgbw.data.manualRGBW.rgbwParams.brightnessPct = brightness;
+}
+
+void NVIDIAIlluminationV1Controller::setZoneRGB(uint8_t zone, uint8_t red, uint8_t green, uint8_t blue, uint8_t brightness)
+{
+    zoneParams.zones[zone].data.rgb.data.manualRGB.rgbParams.colorR = red;
+    zoneParams.zones[zone].data.rgb.data.manualRGB.rgbParams.colorG = green;
+    zoneParams.zones[zone].data.rgb.data.manualRGB.rgbParams.colorB = blue;
+    zoneParams.zones[zone].data.rgb.data.manualRGB.rgbParams.brightnessPct = brightness;
+}
+
 void NVIDIAIlluminationV1Controller::setZone(uint8_t zone, uint8_t mode, NVIDIAIllumination_Config zone_config)
 {
     getControl();
@@ -58,18 +76,11 @@ void NVIDIAIlluminationV1Controller::setZone(uint8_t zone, uint8_t mode, NVIDIAI
             zoneParams.zones[zone].ctrlMode = NV_GPU_CLIENT_ILLUM_CTRL_MODE_MANUAL_RGB;
             if (zoneParams.zones[zone].type == NV_GPU_CLIENT_ILLUM_ZONE_TYPE_RGB)
             {
-                zoneParams.zones[zone].data.rgb.data.manualRGB.rgbParams.colorR = 0;
-                zoneParams.zones[zone].data.rgb.data.manualRGB.rgbParams.colorG = 0;
-                zoneParams.zones[zone].data.rgb.data.manualRGB.rgbParams.colorB = 0;
-                zoneParams.zones[zone].data.rgb.data.manualRGB.rgbParams.brightnessPct = 0;
+                setZoneRGB(zone, 0, 0, 0, 0);
             }
             else if (zoneParams.zones[zone].type == NV_GPU_CLIENT_ILLUM_ZONE_TYPE_RGBW)
             {
-                zoneParams.zones[zone].data.rgbw.data.manualRGBW.rgbwParams.colorR = 0;
-                zoneParams.zones[zone].data.rgbw.data.manualRGBW.rgbwParams.colorG = 0;
-                zoneParams.zones[zone].data.rgbw.data.manualRGBW.rgbwParams.colorB = 0;
-                zoneParams.zones[zone].data.rgbw.data.manualRGBW.rgbwParams.colorW = 0;
-                zoneParams.zones[zone].data.rgbw.data.manualRGBW.rgbwParams.brightnessPct = 0;
+                setZoneRGBW(zone, 0, 0, 0, 0, 0);
             }
             else if (zoneParams.zones[zone].type == NV_GPU_CLIENT_ILLUM_ZONE_TYPE_SINGLE_COLOR)
             {
@@ -84,37 +95,37 @@ void NVIDIAIlluminationV1Controller::setZone(uint8_t zone, uint8_t mode, NVIDIAI
             zoneParams.zones[zone].ctrlMode = NV_GPU_CLIENT_ILLUM_CTRL_MODE_MANUAL_RGB;
             if (zoneParams.zones[zone].type == NV_GPU_CLIENT_ILLUM_ZONE_TYPE_RGB)
             {
-                zoneParams.zones[zone].data.rgb.data.manualRGB.rgbParams.colorR = red;
-                zoneParams.zones[zone].data.rgb.data.manualRGB.rgbParams.colorG = green;
-                zoneParams.zones[zone].data.rgb.data.manualRGB.rgbParams.colorB = blue;
-                zoneParams.zones[zone].data.rgb.data.manualRGB.rgbParams.brightnessPct = zone_config.brightness;
+                setZoneRGB(zone, red, green, blue, zone_config.brightness);
             }
             else if (zoneParams.zones[zone].type == NV_GPU_CLIENT_ILLUM_ZONE_TYPE_RGBW)
             {
-                uint8_t minRGBvalue = 0xFF; 
-                uint8_t maxRGBvalue = 0;
-                // Goal of this logic is to bring out the lowest RGB value
-                minRGBvalue = ((red < 0xFF) ? red : minRGBvalue); 
-                minRGBvalue = ((green < minRGBvalue) ? green : minRGBvalue); 
-                minRGBvalue = ((blue < minRGBvalue) ? blue : minRGBvalue); 
-                // Goal of this logic is to bring out the highest RGB value
-                maxRGBvalue = ((red > 0) ? red : maxRGBvalue); 
-                maxRGBvalue = ((green > maxRGBvalue) ? green : maxRGBvalue); 
-                maxRGBvalue = ((blue > maxRGBvalue) ? blue : maxRGBvalue); 
-                // If difference between the highest and lowest RGB values is 10 or lower, set the white value only,
-                // zero out the rest, this logic was found via tedious examination 
-                if (maxRGBvalue - minRGBvalue <= 10)
+                if(_treats_rgbw_as_rgb)
                 {
-                    red = 0;
-                    green = 0;
-                    blue = 0;
-                    white = (maxRGBvalue + minRGBvalue)/2;
+                    setZoneRGB(zone, 0, 0, 0, 0);
                 }
-                zoneParams.zones[zone].data.rgbw.data.manualRGBW.rgbwParams.colorR = red;
-                zoneParams.zones[zone].data.rgbw.data.manualRGBW.rgbwParams.colorG = green;
-                zoneParams.zones[zone].data.rgbw.data.manualRGBW.rgbwParams.colorB = blue;
-                zoneParams.zones[zone].data.rgbw.data.manualRGBW.rgbwParams.colorW = white;
-                zoneParams.zones[zone].data.rgbw.data.manualRGBW.rgbwParams.brightnessPct = zone_config.brightness;
+                else
+                {
+                    uint8_t minRGBvalue = 0xFF; 
+                    uint8_t maxRGBvalue = 0;
+                    // Goal of this logic is to bring out the lowest RGB value
+                    minRGBvalue = ((red < 0xFF) ? red : minRGBvalue); 
+                    minRGBvalue = ((green < minRGBvalue) ? green : minRGBvalue); 
+                    minRGBvalue = ((blue < minRGBvalue) ? blue : minRGBvalue); 
+                    // Goal of this logic is to bring out the highest RGB value
+                    maxRGBvalue = ((red > 0) ? red : maxRGBvalue); 
+                    maxRGBvalue = ((green > maxRGBvalue) ? green : maxRGBvalue); 
+                    maxRGBvalue = ((blue > maxRGBvalue) ? blue : maxRGBvalue); 
+                    // If difference between the highest and lowest RGB values is 10 or lower, set the white value only,
+                    // zero out the rest, this logic was found via tedious examination 
+                    if (maxRGBvalue - minRGBvalue <= 10)
+                    {
+                        red = 0;
+                        green = 0;
+                        blue = 0;
+                        white = (maxRGBvalue + minRGBvalue)/2;
+                    }
+                    setZoneRGBW(zone, red, green, blue, white, zone_config.brightness);
+                }
             }
             else if (zoneParams.zones[zone].type == NV_GPU_CLIENT_ILLUM_ZONE_TYPE_SINGLE_COLOR)
             {

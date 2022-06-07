@@ -75,7 +75,7 @@ void RGBController_NVIDIAIlluminationV1::SetupZones()
     zoneTypes = nvidia_illumination->getInfo();
     //LOG_DEBUG("Info retrieved!");
     nvidia_illum_zone_names[NV_GPU_CLIENT_ILLUM_ZONE_TYPE_RGB] = "RGB";
-    nvidia_illum_zone_names[NV_GPU_CLIENT_ILLUM_ZONE_TYPE_RGBW] = "RGB";
+    nvidia_illum_zone_names[NV_GPU_CLIENT_ILLUM_ZONE_TYPE_RGBW] = "RGBW";
     nvidia_illum_zone_names[NV_GPU_CLIENT_ILLUM_ZONE_TYPE_COLOR_FIXED] = "FIXED COLOR";
     nvidia_illum_zone_names[NV_GPU_CLIENT_ILLUM_ZONE_TYPE_SINGLE_COLOR] = "SINGLE COLOR";
     //LOG_DEBUG("Starting zone for loop...");
