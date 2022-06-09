@@ -38,6 +38,7 @@ typedef struct
 
 #define GPU_NUM_DEVICES (sizeof(device_list) / sizeof(device_list[ 0 ]))
 
+// These defines and the additional boolen added to the structure help with controller logic for a weird edge case involving a combination of zone type + specific device being controlled
 #define TREATS_RGBW_AS_RGB  true
 #define TREATS_RGBW_AS_RGBW false
 
