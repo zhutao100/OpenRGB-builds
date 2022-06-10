@@ -21,7 +21,9 @@ NVIDIAIlluminationV1Controller::~NVIDIAIlluminationV1Controller()
 
 void NVIDIAIlluminationV1Controller::getControl()
 {
-    std::memset(&zoneParams, 0, sizeof(zoneParams));
+    // This was previously memset(&zoneParams, 0, sizeof(zoneParams));
+    // But this kind of zero initialization is more up-to-date and safer in the event of non-primitive data types
+    zoneParams = {};
     // Hardcoded value found via sniffing, this may be different for other cards, once that is 
     // found, may be best to simply if/else this based on the card detected or map it out in the detector and 
     // then pass via constructor to here?
