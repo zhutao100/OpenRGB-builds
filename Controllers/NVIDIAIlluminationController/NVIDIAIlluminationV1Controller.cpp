@@ -99,6 +99,9 @@ void NVIDIAIlluminationV1Controller::setZone(uint8_t zone, uint8_t mode, NVIDIAI
             }
             else if (zoneParams.zones[zone].type == NV_GPU_CLIENT_ILLUM_ZONE_TYPE_RGBW)
             {
+                // Certain devices seem to ignore the white value entirely, despite the zone being reported back by the 
+                // API as RGBW, as such, this if statement was added to conduct a different course of action based 
+                // on definitions placed in the controller page
                 if(!_treats_rgbw_as_rgb)
                 {
                     uint8_t minRGBvalue = 0xFF; 

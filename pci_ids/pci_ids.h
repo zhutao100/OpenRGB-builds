@@ -428,8 +428,6 @@
 #define PALIT_RTX3060_LHR_SUB_DEV                       0x2504
 
 #define PALIT_RTX3060TI_SUB_DEV                         0x2486
-#define PALIT_RTX3060TI_LHR_SUB_DEV                     0x2489
-#define PALIT_RTX3060TI_V1_LHR_DEV                      0x2414
 
 #define PALIT_RTX3070_SUB_DEV                           0x2484
 #define PALIT_RTX3070_LHR_SUB_DEV                       0x2488
