@@ -53,5 +53,4 @@ private:
     s32 nvapi_xfer(char nvapi_call, NV_GPU_CLIENT_ILLUM_ZONE_CONTROL_PARAMS* zone_control_struct);
     #endif
     HANDLE delay_timer;
-    s32 nvapi_xfer(char nvapi_call, NV_GPU_CLIENT_ILLUM_ZONE_CONTROL_PARAMS* zone_control_struct);
 };
