@@ -234,10 +234,4 @@ s32 i2c_smbus_linux::nvapi_xfer(char nvapi_call, NV_GPU_CLIENT_ILLUM_ZONE_CONTRO
 }
 #endif
 
-s32 i2c_smbus_linux::nvapi_xfer(char nvapi_call, NV_GPU_CLIENT_ILLUM_ZONE_CONTROL_PARAMS* zone_control_struct)
-{
-    return -1;
-}
-#endif
-
 REGISTER_I2C_BUS_DETECTOR(i2c_smbus_linux_detect);
