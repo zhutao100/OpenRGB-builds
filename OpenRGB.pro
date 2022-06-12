@@ -138,7 +138,6 @@ INCLUDEPATH +=                                                                  
     Controllers/MSIVigorController/                                                             \
     Controllers/NVIDIAIlluminationController/                                                   \
     Controllers/NanoleafController/                                                             \
-    Controllers/NVIDIAFoundersController/                                                       \
     Controllers/NZXTHue2Controller/                                                             \
     Controllers/NZXTHuePlusController/                                                          \
     Controllers/NZXTKrakenController/                                                           \

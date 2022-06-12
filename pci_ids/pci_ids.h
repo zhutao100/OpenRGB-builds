@@ -92,12 +92,6 @@
 #define NVIDIA_RTX3080_FE_NON_LHR_SUB_DEV               0x1467
 #define NVIDIA_RTX2070_FE_SUPER_SUB_DEV                 0x13AA
 
-/*-----------------------------------------------------*\
-| nVidia Sub-Device IDs                                 |
-\*-----------------------------------------------------*/
-#define NVIDIA_RTX3080_FE_NON_LHR_SUB_DEV               0x1467
-#define NVIDIA_RTX2070_FE_SUPER_SUB_DEV                 0x13AA
-
 /*---------------------------------------------------------*\
 | PCI Sub-Vendor IDs                                        |
 \*---------------------------------------------------------*/
@@ -298,7 +292,6 @@
 \*-----------------------------------------------------*/
 #define GAINWARD_GTX_1080_PHOENIX                       0x1B80
 #define GAINWARD_GTX_1080_TI_PHOENIX                    0x1B06
-#define GAINWARD_RTX_3060TI_GHOST_SUB_DEV               0x2489
 
 /*-----------------------------------------------------*\
 | GALAX / KFA2 Sub-Device IDs                           |
