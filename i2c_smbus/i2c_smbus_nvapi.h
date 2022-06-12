@@ -17,6 +17,7 @@
 // NVAPI Direct Calls
 #define NVAPI_ZONE_GET_CONTROL 0
 #define NVAPI_ZONE_SET_CONTROL 1
+#define NVAPI_CONTROL_BUFFER_TIME_MS 30
 
 class i2c_smbus_nvapi : public i2c_smbus_interface
 {
