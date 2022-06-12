@@ -457,12 +457,6 @@
 #define SAPPHIRE_NAVI23_NITRO_PLUS_SUB_DEV              0xE448
 #define SAPPHIRE_NAVI21_TOXIC_SUB_DEV                   0xF440
 
-/*-----------------------------------------------------*\
-| Zotac Sub-Device IDs                                  |
-\*-----------------------------------------------------*/
-#define ZOTAC_GTX1070_AMP_EXTREME_SUB_DEV               0x1435
-#define ZOTAC_GTX1070TI_AMP_EXTREME_SUB_DEV             0x2435
-
 /*---------------------------------------------------------*\
 | PCI ID Macros                                             |
 \*---------------------------------------------------------*/
