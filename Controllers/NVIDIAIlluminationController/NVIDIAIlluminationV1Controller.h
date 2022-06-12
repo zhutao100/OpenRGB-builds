@@ -49,10 +49,12 @@ class NVIDIAIlluminationV1Controller
         std::vector<NV_GPU_CLIENT_ILLUM_ZONE_TYPE> getInfo();
         void getControl();
         void setControl();
-        NV_GPU_CLIENT_ILLUM_ZONE_CONTROL_PARAMS zoneParams;
+        NV_GPU_CLIENT_ILLUM_ZONE_CONTROL_PARAMS zone_params;
 
     private:
         i2c_smbus_interface* bus;
         bool _treats_rgbw_as_rgb;
+        const array<uint8_t, 4> all_zeros = {0, 0, 0, 0};
+
 };
 #endif

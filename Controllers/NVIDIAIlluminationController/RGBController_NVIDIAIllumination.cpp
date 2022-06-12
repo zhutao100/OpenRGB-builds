@@ -44,12 +44,9 @@ RGBController_NVIDIAIlluminationV1::RGBController_NVIDIAIlluminationV1(NVIDIAIll
     //LOG_DEBUG("Setting up Zones...");
     SetupZones();
 
-    // Initialize active mode and stored color
-    // unsigned char raw_active_mode = nvidia_founders[0]->GetMode();
-
     //LOG_DEBUG("Retrieving stored color...");
     nvidia_illumination->getColor();
-    for (unsigned int i = 0; i < nvidia_illumination->zoneParams.numIllumZonesControl; i++)
+    for(unsigned int i = 0; i < nvidia_illumination->zoneParams.numIllumZonesControl; i++)
     {
         zones[i].colors[0] = ToRGBColor(nvidia_illumination->zoneParams.zones[i].data.rgb.data.manualRGB.rgbParams.colorR, 
         nvidia_illumination->zoneParams.zones[i].data.rgb.data.manualRGB.rgbParams.colorG, 
@@ -69,8 +66,10 @@ void RGBController_NVIDIAIlluminationV1::UpdateSingleLED(int)
 
 void RGBController_NVIDIAIlluminationV1::SetupZones()
 {
-    // Use the NvAPI to gather existing zones on the card and their capabilities, 
-    // populate available zones accordingly.
+    /*--------------------------------------------------------------------------*\
+    | Use the NvAPI to gather existing zones on the card and their capabilities, |
+    | populate available zones accordingly.                                      |
+    \*--------------------------------------------------------------------------*/
     //LOG_DEBUG("Calling get info...");
     zoneTypes = nvidia_illumination->getInfo();
     //LOG_DEBUG("Info retrieved!");
@@ -91,7 +90,6 @@ void RGBController_NVIDIAIlluminationV1::SetupZones()
         new_zone->leds_count    = 1;
         new_zone->matrix_map    = NULL;
         new_led->name           = "Entire Zone";
-        //Push the zone and LED on to device vectors 
         leds.push_back(*new_led);
         zones.push_back(*new_zone);
         zoneIndexMap.push_back(zone_idx);
@@ -124,7 +122,7 @@ uint8_t RGBController_NVIDIAIlluminationV1::getModeIndex(uint8_t mode_value)
 {
     for(uint8_t mode_index = 0; mode_index < modes.size(); mode_index++)
     {
-        if (modes[mode_index].value == mode_value)
+        if(modes[mode_index].value == mode_value)
         {
             return mode_index;
         }

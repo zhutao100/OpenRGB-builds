@@ -38,7 +38,10 @@ typedef struct
 
 #define GPU_NUM_DEVICES (sizeof(device_list) / sizeof(device_list[ 0 ]))
 
-// These defines and the additional boolen added to the structure help with controller logic for a weird edge case involving a combination of zone type + specific device being controlled
+/*-----------------------------------------------------------------------------------------------------*\
+| Certain devices seem to ignore the white value entirely, despite the zone being reported back by the  |
+| API as RGBW, so this boolean is passed at detection time via constructor inform the controller logic. |
+\*-----------------------------------------------------------------------------------------------------*/
 #define TREATS_RGBW_AS_RGB  true
 #define TREATS_RGBW_AS_RGBW false
 
@@ -70,7 +73,7 @@ void DetectNVIDIAIlluminationGPUControllers(std::vector<i2c_smbus_interface*>& b
     {
         for(unsigned int dev_idx = 0; dev_idx < GPU_NUM_DEVICES; dev_idx++)
         {
-            if (busses[bus]->port_id != 1)
+            if(busses[bus]->port_id != 1)
             {
                 break;
             }
@@ -88,7 +91,6 @@ void DetectNVIDIAIlluminationGPUControllers(std::vector<i2c_smbus_interface*>& b
                             NVIDIAIlluminationV1Controller*     new_controller;
                             RGBController_NVIDIAIlluminationV1* new_rgbcontroller;
 
-                            // TODO: Slap a QueryIllumSupport if statement around this, maybe?
                             //LOG_DEBUG("Creating Illumination controller...");
                             new_controller          = new NVIDIAIlluminationV1Controller(busses[bus], device_list[dev_idx].treats_rgbw_as_rgb);
                             //LOG_DEBUG("Creating RGB controller...");
