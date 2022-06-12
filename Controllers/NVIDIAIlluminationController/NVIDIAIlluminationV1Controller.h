@@ -22,6 +22,7 @@
 #pragma once
 
 #define NVIDIA_ILLUMINATION_V1_CONTROLLER_NAME   "NVIDIA_ILLUMINATION_V1"
+#define NVAPI_OK                                 0
 
 struct NVIDIAIllumination_Config
 {
@@ -52,8 +53,10 @@ class NVIDIAIlluminationV1Controller
         NV_GPU_CLIENT_ILLUM_ZONE_CONTROL_PARAMS zone_params;
 
     private:
+        void checkNVAPIreturn();
         i2c_smbus_interface* bus;
         bool _treats_rgbw_as_rgb;
+        NV_STATUS nvapi_return = 0;
         const std::array<uint8_t, 4> all_zeros = {0, 0, 0, 0};
 
 };

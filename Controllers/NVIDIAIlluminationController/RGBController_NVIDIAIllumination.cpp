@@ -14,7 +14,6 @@
 
 RGBController_NVIDIAIlluminationV1::RGBController_NVIDIAIlluminationV1(NVIDIAIlluminationV1Controller* nvidia_illumination_ptr)
 {
-    //LOG_DEBUG("Entering RGB Controller Constructor");
     nvidia_illumination = nvidia_illumination_ptr;
 
     name        = "NVIDIA Illumination GPU";
@@ -41,10 +40,10 @@ RGBController_NVIDIAIlluminationV1::RGBController_NVIDIAIlluminationV1(NVIDIAIll
     Static.brightness_max = 100;
     modes.push_back(Static);
 
-    //LOG_DEBUG("Setting up Zones...");
+    LOG_DEBUG("Setting up Zones...");
     SetupZones();
 
-    //LOG_DEBUG("Retrieving stored color...");
+    LOG_DEBUG("Retrieving stored color...");
     nvidia_illumination->getColor();
     for(unsigned int i = 0; i < nvidia_illumination->zone_params.numIllumZonesControl; i++)
     {
@@ -70,14 +69,14 @@ void RGBController_NVIDIAIlluminationV1::SetupZones()
     | Use the NvAPI to gather existing zones on the card and their capabilities, |
     | populate available zones accordingly.                                      |
     \*--------------------------------------------------------------------------*/
-    //LOG_DEBUG("Calling get info...");
+    LOG_DEBUG("Calling get info...");
     zoneTypes = nvidia_illumination->getInfo();
-    //LOG_DEBUG("Info retrieved!");
+    LOG_DEBUG("Info retrieved!");
     nvidia_illum_zone_names[NV_GPU_CLIENT_ILLUM_ZONE_TYPE_RGB] = "RGB";
     nvidia_illum_zone_names[NV_GPU_CLIENT_ILLUM_ZONE_TYPE_RGBW] = "RGBW";
     nvidia_illum_zone_names[NV_GPU_CLIENT_ILLUM_ZONE_TYPE_COLOR_FIXED] = "FIXED COLOR";
     nvidia_illum_zone_names[NV_GPU_CLIENT_ILLUM_ZONE_TYPE_SINGLE_COLOR] = "SINGLE COLOR";
-    //LOG_DEBUG("Starting zone for loop...");
+    LOG_DEBUG("Starting zone for loop...");
     for(uint8_t zone_idx = 0; zone_idx < zoneTypes.size(); zone_idx++)
     {
         zone* new_zone = new zone();
@@ -94,7 +93,7 @@ void RGBController_NVIDIAIlluminationV1::SetupZones()
         zones.push_back(*new_zone);
         zoneIndexMap.push_back(zone_idx);
     }
-    //LOG_DEBUG("Setting up colors...");
+    LOG_DEBUG("Setting up colors...");
     SetupColors();
 
 }

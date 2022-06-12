@@ -19,6 +19,14 @@ NVIDIAIlluminationV1Controller::~NVIDIAIlluminationV1Controller()
 {
 }
 
+void NVIDIAIlluminationV1Controller::checkNVAPIreturn()
+{
+    if (nvapi_return != NVAPI_OK)
+    {
+        LOG_DEBUG("NVAPI return code not NVAPI_OK: %d", nvapi_return);
+    }
+}
+
 void NVIDIAIlluminationV1Controller::getControl()
 {
     /*------------------------------------------------------------------------------------------------*\
@@ -38,12 +46,14 @@ void NVIDIAIlluminationV1Controller::getControl()
     | As far as I can tell, this pre-populates the zone type value, as well as the number of zones        |
     | able to be controlled, and their existing settings, very useful for extending this controller.      |
     \*---------------------------------------------------------------------------------------------------*/
-    bus->nvapi_xfer(NVAPI_ZONE_GET_CONTROL, &zone_params);
+    nvapi_return = bus->nvapi_xfer(NVAPI_ZONE_GET_CONTROL, &zone_params);
+    checkNVAPIreturn();
 }
 
 void NVIDIAIlluminationV1Controller::setControl()
 {
     bus->nvapi_xfer(NVAPI_ZONE_SET_CONTROL, &zone_params);
+    checkNVAPIreturn();
 }
 
 /*----------------------------------------------------------------------------------------------------*\

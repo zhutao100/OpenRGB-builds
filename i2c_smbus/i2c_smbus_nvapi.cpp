@@ -162,7 +162,7 @@ s32 i2c_smbus_nvapi::i2c_xfer(u8 addr, char read_write, int* size, u8* data)
 #ifdef _WIN32
 s32 i2c_smbus_nvapi::nvapi_xfer(char nvapi_call, NV_GPU_CLIENT_ILLUM_ZONE_CONTROL_PARAMS* zone_control_struct)
 {
-    NV_STATUS ret;
+    NV_STATUS ret = -1;
 
     if(nvapi_call == NVAPI_ZONE_SET_CONTROL)
     {
