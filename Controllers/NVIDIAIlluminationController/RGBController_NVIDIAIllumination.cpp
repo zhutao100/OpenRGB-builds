@@ -46,11 +46,11 @@ RGBController_NVIDIAIlluminationV1::RGBController_NVIDIAIlluminationV1(NVIDIAIll
 
     //LOG_DEBUG("Retrieving stored color...");
     nvidia_illumination->getColor();
-    for(unsigned int i = 0; i < nvidia_illumination->zoneParams.numIllumZonesControl; i++)
+    for(unsigned int i = 0; i < nvidia_illumination->zone_params.numIllumZonesControl; i++)
     {
-        zones[i].colors[0] = ToRGBColor(nvidia_illumination->zoneParams.zones[i].data.rgb.data.manualRGB.rgbParams.colorR, 
-        nvidia_illumination->zoneParams.zones[i].data.rgb.data.manualRGB.rgbParams.colorG, 
-        nvidia_illumination->zoneParams.zones[i].data.rgb.data.manualRGB.rgbParams.colorB);
+        zones[i].colors[0] = ToRGBColor(nvidia_illumination->zone_params.zones[i].data.rgb.data.manualRGB.rgbParams.colorR,
+        nvidia_illumination->zone_params.zones[i].data.rgb.data.manualRGB.rgbParams.colorG,
+        nvidia_illumination->zone_params.zones[i].data.rgb.data.manualRGB.rgbParams.colorB);
     }
 }
 

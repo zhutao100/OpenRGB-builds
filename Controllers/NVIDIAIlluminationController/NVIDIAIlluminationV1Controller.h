@@ -54,7 +54,7 @@ class NVIDIAIlluminationV1Controller
     private:
         i2c_smbus_interface* bus;
         bool _treats_rgbw_as_rgb;
-        const array<uint8_t, 4> all_zeros = {0, 0, 0, 0};
+        const std::array<uint8_t, 4> all_zeros = {0, 0, 0, 0};
 
 };
 #endif
