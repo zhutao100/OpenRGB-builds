@@ -60,9 +60,9 @@ RGBController_NVIDIAIlluminationV1::RGBController_NVIDIAIlluminationV1(NVIDIAIll
     type = DEVICE_TYPE_GPU;
 
     mode Off;
-    Off.name       = "Off";
-    Off.value      = NVIDIA_ILLUMINATION_OFF;
-    Off.color_mode = MODE_COLORS_NONE;
+    Off.name              = "Off";
+    Off.value             = NVIDIA_ILLUMINATION_OFF;
+    Off.color_mode        = MODE_COLORS_NONE;
     modes.push_back(Off);
 
     mode Static;

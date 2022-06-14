@@ -49,7 +49,7 @@ enum
 *                                                                                          *
 \******************************************************************************************/
 
-void DetectNVIDIAIlluminationGPUControllersRGBWforRGBW(i2c_smbus_interface* bus, uint8_t /*i2c_addr*/, const std::string& name)
+void DetectNVIDIAIlluminationGPUControllerRGBW(i2c_smbus_interface* bus, uint8_t /*i2c_addr*/, const std::string& name)
 {
     if(bus->port_id != 1)
     {
@@ -80,7 +80,7 @@ void DetectNVIDIAIlluminationGPUControllersRGBWforRGBW(i2c_smbus_interface* bus,
 *           name - GPU device name                                                         *
 *                                                                                          *
 \******************************************************************************************/
-void DetectNVIDIAIlluminationGPUControllersRGBforRGBW(i2c_smbus_interface* bus, uint8_t /*i2c_addr*/, const std::string& name)
+void DetectNVIDIAIlluminationGPUControllerRGB(i2c_smbus_interface* bus, uint8_t /*i2c_addr*/, const std::string& name)
 {
     if(bus->port_id != 1)
     {
@@ -96,8 +96,8 @@ void DetectNVIDIAIlluminationGPUControllersRGBforRGBW(i2c_smbus_interface* bus, 
 
 } /* DetectNVIDIAIlluminationGPUControllersRGBforRGBW() */
 
-REGISTER_I2C_PCI_DETECTOR("NVIDIA 2070 SUPER FE",            DetectNVIDIAIlluminationGPUControllersRGBWforRGBW,   NVIDIA_VEN,   NVIDIA_RTX2070S_DEV,           NVIDIA_VEN,   NVIDIA_RTX2070_FE_SUPER_SUB_DEV,            0);
-REGISTER_I2C_PCI_DETECTOR("PNY 3060TI XLR8 REVEL EPIC-X",    DetectNVIDIAIlluminationGPUControllersRGBforRGBW,    NVIDIA_VEN,   NVIDIA_RTX3060TI_LHR_DEV,      NVIDIA_VEN,   PNY_RTX_3060TI_XLR8_REVEL_EPIC_X_SUB_DEV,   0);
-REGISTER_I2C_PCI_DETECTOR("NVIDIA 3060TI V1 LHR",            DetectNVIDIAIlluminationGPUControllersRGBforRGBW,    NVIDIA_VEN,   NVIDIA_RTX3060TI_V1_LHR_DEV,   NVIDIA_VEN,   NVIDIA_RTX3060TI_V1_LHR_DEV,                0);
-REGISTER_I2C_PCI_DETECTOR("NVIDIA 3060TI LHR",               DetectNVIDIAIlluminationGPUControllersRGBWforRGBW,   NVIDIA_VEN,   NVIDIA_RTX3060TI_LHR_DEV,      NVIDIA_VEN,   NVIDIA_RTX3060TI_LHR_DEV,                   0);
-REGISTER_I2C_PCI_DETECTOR("NVIDIA 3080 FE",                  DetectNVIDIAIlluminationGPUControllersRGBWforRGBW,   NVIDIA_VEN,   NVIDIA_RTX3080_DEV,            NVIDIA_VEN,   NVIDIA_RTX3080_FE_NON_LHR_SUB_DEV,          0);
+REGISTER_I2C_PCI_DETECTOR("NVIDIA 2070 SUPER FE",            DetectNVIDIAIlluminationGPUControllerRGBW,   NVIDIA_VEN,   NVIDIA_RTX2070S_DEV,           NVIDIA_VEN,   NVIDIA_RTX2070_FE_SUPER_SUB_DEV,            0);
+REGISTER_I2C_PCI_DETECTOR("PNY 3060TI XLR8 REVEL EPIC-X",    DetectNVIDIAIlluminationGPUControllerRGB,    NVIDIA_VEN,   NVIDIA_RTX3060TI_LHR_DEV,      NVIDIA_VEN,   PNY_RTX_3060TI_XLR8_REVEL_EPIC_X_SUB_DEV,   0);
+REGISTER_I2C_PCI_DETECTOR("NVIDIA 3060TI V1 LHR",            DetectNVIDIAIlluminationGPUControllerRGB,    NVIDIA_VEN,   NVIDIA_RTX3060TI_V1_LHR_DEV,   NVIDIA_VEN,   NVIDIA_RTX3060TI_V1_LHR_DEV,                0);
+REGISTER_I2C_PCI_DETECTOR("NVIDIA 3060TI LHR",               DetectNVIDIAIlluminationGPUControllerRGBW,   NVIDIA_VEN,   NVIDIA_RTX3060TI_LHR_DEV,      NVIDIA_VEN,   NVIDIA_RTX3060TI_LHR_DEV,                   0);
+REGISTER_I2C_PCI_DETECTOR("NVIDIA 3080 FE",                  DetectNVIDIAIlluminationGPUControllerRGBW,   NVIDIA_VEN,   NVIDIA_RTX3080_DEV,            NVIDIA_VEN,   NVIDIA_RTX3080_FE_NON_LHR_SUB_DEV,          0);
