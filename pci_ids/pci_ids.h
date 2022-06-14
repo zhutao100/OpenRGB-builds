@@ -89,8 +89,9 @@
 /*-----------------------------------------------------*\
 | nVidia Sub-Device IDs                                 |
 \*-----------------------------------------------------*/
-#define NVIDIA_RTX3080_FE_NON_LHR_SUB_DEV               0x1467
-#define NVIDIA_RTX2070_FE_SUPER_SUB_DEV                 0x13AA
+#define NVIDIA_RTX3080_FE_SUB_DEV               0x1467
+#define NVIDIA_RTX3090_FE_SUB_DEV               0x147D
+#define NVIDIA_RTX2070_FE_SUPER_SUB_DEV         0x13AA
 
 /*---------------------------------------------------------*\
 | PCI Sub-Vendor IDs                                        |
