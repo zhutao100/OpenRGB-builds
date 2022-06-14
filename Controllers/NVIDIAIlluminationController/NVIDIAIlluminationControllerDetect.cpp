@@ -61,13 +61,11 @@ static const gpu_pci_device device_list[] =
 *                                                                                          *
 *           bus - pointer to i2c_smbus_interface where NVIDIA ILLUMINATION GPU device      *
 *                 is connected                                                             *
-*           dev - I2C address of NVIDIA ILLUMINATION GPU device                            *
 *                                                                                          *
 \******************************************************************************************/
 
 void DetectNVIDIAIlluminationGPUControllers(std::vector<i2c_smbus_interface*>& busses)
 {
-    //LOG_DEBUG("Entered detection function.");
     for (unsigned int bus = 0; bus < busses.size(); bus++)
     {
         for(unsigned int dev_idx = 0; dev_idx < GPU_NUM_DEVICES; dev_idx++)
@@ -99,6 +97,6 @@ void DetectNVIDIAIlluminationGPUControllers(std::vector<i2c_smbus_interface*>& b
             }
         }
     }
-}   /* DetectNVIDIAGPUControllers() */
+}   /* DetectNVIDIAIlluminationGPUControllers() */
 
 REGISTER_I2C_DETECTOR("NVIDIA ILLUMINATION GPU", DetectNVIDIAIlluminationGPUControllers);
