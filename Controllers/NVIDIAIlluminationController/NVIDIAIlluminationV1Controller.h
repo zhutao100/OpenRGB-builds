@@ -8,7 +8,6 @@
 |  Carter Miller (GingerRunner) 1/4/2022    |
 \*-----------------------------------------*/
 
-#ifdef _WIN32
 
 #include <string>
 #include "i2c_smbus.h"
@@ -42,22 +41,22 @@ class NVIDIAIlluminationV1Controller
         NVIDIAIlluminationV1Controller(i2c_smbus_interface* bus, bool treats_rgbw_as_rgb);
         ~NVIDIAIlluminationV1Controller();
 
-        void setZone(uint8_t zone, uint8_t mode, NVIDIAIllumination_Config zone_config);
+        void getControl();
+        void setControl();
         bool allZero(std::array<uint8_t, 4> colors);
         void setZoneRGBW(uint8_t zone, uint8_t red, uint8_t green, uint8_t blue, uint8_t white, uint8_t brightness);
         void setZoneRGB(uint8_t zone, uint8_t red, uint8_t green, uint8_t blue, uint8_t brightness);
-        void getColor();
+        void setZone(uint8_t zone, uint8_t mode, NVIDIAIllumination_Config zone_config);
+        int getZoneColor(uint8_t zone_index);
         std::vector<NV_GPU_CLIENT_ILLUM_ZONE_TYPE> getInfo();
-        void getControl();
-        void setControl();
-        NV_GPU_CLIENT_ILLUM_ZONE_CONTROL_PARAMS zone_params;
 
     private:
         void checkNVAPIreturn();
+
         i2c_smbus_interface* bus;
         bool _treats_rgbw_as_rgb;
+        NV_GPU_CLIENT_ILLUM_ZONE_CONTROL_PARAMS zone_params;
         NV_STATUS nvapi_return = 0;
         const std::array<uint8_t, 4> all_zeros = {0, 0, 0, 0};
 
 };
-#endif

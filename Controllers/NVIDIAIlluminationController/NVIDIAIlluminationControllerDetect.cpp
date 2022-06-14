@@ -7,7 +7,6 @@
 |  Carter Miller (GingerRunner) 1/4/2022         |
 \*----------------------------------------------*/
 
-#ifdef _WIN32
 #include "Detector.h"
 
 #include "LogManager.h"
@@ -87,19 +86,13 @@ void DetectNVIDIAIlluminationGPUControllers(std::vector<i2c_smbus_interface*>& b
                 {
                     case NVIDIA_ILLUMINATION_V1:
                         {
-                            //LOG_DEBUG(GPU_DETECT_MESSAGE, NVIDIA_ILLUMINATION_V1_CONTROLLER_NAME, bus, device_list[dev_idx].pci_device, device_list[dev_idx].pci_subsystem_device, device_list[dev_idx].name);
                             NVIDIAIlluminationV1Controller*     new_controller;
                             RGBController_NVIDIAIlluminationV1* new_rgbcontroller;
 
-                            //LOG_DEBUG("Creating Illumination controller...");
                             new_controller          = new NVIDIAIlluminationV1Controller(busses[bus], device_list[dev_idx].treats_rgbw_as_rgb);
-                            //LOG_DEBUG("Creating RGB controller...");
                             new_rgbcontroller       = new RGBController_NVIDIAIlluminationV1(new_controller);
-                            //LOG_DEBUG("Setting name to device list by index...");
                             new_rgbcontroller->name = device_list[dev_idx].name;
-                            //LOG_DEBUG("Regsitering controller via resource manager...");
                             ResourceManager::get()->RegisterRGBController(new_rgbcontroller);
-                            //LOG_DEBUG("Past Resource Manager get call...");
                         }
                         break;
                 }
@@ -109,4 +102,3 @@ void DetectNVIDIAIlluminationGPUControllers(std::vector<i2c_smbus_interface*>& b
 }   /* DetectNVIDIAGPUControllers() */
 
 REGISTER_I2C_DETECTOR("NVIDIA ILLUMINATION GPU", DetectNVIDIAIlluminationGPUControllers);
-#endif

@@ -7,7 +7,6 @@
 |  Carter Miller (GingerRunner) 1/4/2022    |
 \*-----------------------------------------*/
 
-#ifdef _WIN32
 
 #pragma once
 
@@ -39,9 +38,8 @@ class RGBController_NVIDIAIlluminationV1 : public RGBController
 
     private:
         uint8_t getModeIndex(uint8_t mode_value);
-        NVIDIAIlluminationV1Controller* nvidia_illumination;
+        NVIDIAIlluminationV1Controller* controller;
         std::vector<uint8_t> zoneIndexMap;
         std::vector<NV_GPU_CLIENT_ILLUM_ZONE_TYPE> zoneTypes;
         std::map<NV_GPU_CLIENT_ILLUM_ZONE_TYPE, const char *> nvidia_illum_zone_names;
 };
-#endif

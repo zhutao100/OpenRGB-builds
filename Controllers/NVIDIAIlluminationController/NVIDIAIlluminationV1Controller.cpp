@@ -5,7 +5,6 @@
 |                                                 |
 |  Carter Miller (GingerRunner) 1/5/2022          |
 \*-----------------------------------------------*/
-#ifdef _WIN32
 
 #include "NVIDIAIlluminationV1Controller.h"
 
@@ -40,7 +39,7 @@ void NVIDIAIlluminationV1Controller::getControl()
     | found, may be best to simply if/else this based on the card detected or map it out in the detector  |
     | and then pass via constructor to here.                                                              |
     \*---------------------------------------------------------------------------------------------------*/
-    zone_params.version = 72012;
+    zone_params.version  = 72012;
     zone_params.bDefault = 0;
     /*---------------------------------------------------------------------------------------------------*\
     | As far as I can tell, this pre-populates the zone type value, as well as the number of zones        |
@@ -169,9 +168,11 @@ void NVIDIAIlluminationV1Controller::setZone(uint8_t zone, uint8_t mode, NVIDIAI
     setControl();
 }
 
-void NVIDIAIlluminationV1Controller::getColor()
+int NVIDIAIlluminationV1Controller::getZoneColor(uint8_t zone_index)
 {
-    getControl();
+    return ToRGBColor(zone_params.zones[zone_index].data.rgb.data.manualRGB.rgbParams.colorR,
+                      zone_params.zones[zone_index].data.rgb.data.manualRGB.rgbParams.colorG,
+                      zone_params.zones[zone_index].data.rgb.data.manualRGB.rgbParams.colorB);
 }
 
 std::vector<NV_GPU_CLIENT_ILLUM_ZONE_TYPE> NVIDIAIlluminationV1Controller::getInfo()
@@ -184,4 +185,3 @@ std::vector<NV_GPU_CLIENT_ILLUM_ZONE_TYPE> NVIDIAIlluminationV1Controller::getIn
     }
     return zone_types;
 }
-#endif

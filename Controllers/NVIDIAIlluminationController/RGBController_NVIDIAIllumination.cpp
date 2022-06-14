@@ -6,15 +6,51 @@
 |                                              |
 |  Carter Miller (GingerRunner) 1/4/2022       |
 \*--------------------------------------------*/
-#ifdef _WIN32
+
+/**------------------------------------------------------------------*\
+    @name NVIDIA Illumination
+    @category GPU
+    @type PCI
+    @save :x:
+    @direct :white_check_mark:
+    @effects :x:
+    @detectors DetectNVIDIAIlluminationGPUControllers
+    @comment Tested on various 30 series GPUs and a Founders Edition 2070 Super
+        If you want to see if your card should also use this controller, download the DLLs from the release of [this](https://gitlab.com/gingerrunner/NvAPISpy/-/tree/NvAPITest).
+
+        Perform the global replacement technique, which is specified in the README of NvAPI spy.  Once this is complete, use an RGB program of your choice and make some basic 
+        lighting changes.
+
+        Check the C:\NvAPISpy\ folder and see if the logs created are filled with calls like this:
+
+        NvAPI_GPU_ClientIllumZonesGetControl:   version: 72012  numIllumZones: 2  bDefault: 0  rsvdField: 0
+                                                ZoneIdx: 0 ----------------------------------------
+                                                **ZoneType: RGBW  ControlMode: MANUAL
+                                                **DATA_RGBW::  Red: 255  Green: 0  Blue: 0  White: 0  Brightness%: 36
+                                                ZoneIdx: 1 ----------------------------------------
+                                                **ZoneType: SINGLE_COLOR  ControlMode: MANUAL
+                                                **DATA_SINGLE_COLOR::  Brightness% 100
+        NvAPI_GPU_ClientIllumZonesSetControl:   version: 72012  numIllumZones: 2  bDefault: 0  rsvdField: 0
+                                                ZoneIdx: 0 ----------------------------------------
+                                                **ZoneType: RGBW  ControlMode: MANUAL
+                                                **DATA_RGBW::  Red: 255  Green: 0  Blue: 0  White: 0  Brightness%: 36
+                                                ZoneIdx: 1 ----------------------------------------
+                                                **ZoneType: SINGLE_COLOR  ControlMode: MANUAL
+                                                **DATA_SINGLE_COLOR::  Brightness% 44
+
+        If you see Get/Set Calls above for zone control, please create a [new device issue](https://gitlab.com/CalcProgrammer1/OpenRGB/-/issues/new?issuable_template=New%20Device#)
+        and attach the relevant details to request support for your device (try various modes in each color, especially white and shades around it, since some cards treat RGBW as 
+        standard RGB).
+\*-------------------------------------------------------------------*/
+
 
 #include "RGBController_NVIDIAIllumination.h"
 #include "NVIDIAIlluminationV1Controller.h"
 #include <array>
 
-RGBController_NVIDIAIlluminationV1::RGBController_NVIDIAIlluminationV1(NVIDIAIlluminationV1Controller* nvidia_illumination_ptr)
+RGBController_NVIDIAIlluminationV1::RGBController_NVIDIAIlluminationV1(NVIDIAIlluminationV1Controller* controller_ptr)
 {
-    nvidia_illumination = nvidia_illumination_ptr;
+    controller = controller_ptr;
 
     name        = "NVIDIA Illumination GPU";
     vendor      = "NVIDIA";
@@ -29,14 +65,14 @@ RGBController_NVIDIAIlluminationV1::RGBController_NVIDIAIlluminationV1(NVIDIAIll
     modes.push_back(Off);
 
     mode Static;
-    Static.name       = "Direct";
-    Static.value      = NVIDIA_ILLUMINATION_DIRECT;
-    Static.flags      = MODE_FLAG_HAS_BRIGHTNESS | MODE_FLAG_HAS_PER_LED_COLOR;
-    Static.color_mode = MODE_COLORS_PER_LED;
-    Static.colors_min = 1;
-    Static.colors_max = 1;
+    Static.name           = "Direct";
+    Static.value          = NVIDIA_ILLUMINATION_DIRECT;
+    Static.flags          = MODE_FLAG_HAS_BRIGHTNESS | MODE_FLAG_HAS_PER_LED_COLOR;
+    Static.color_mode     = MODE_COLORS_PER_LED;
+    Static.colors_min     = 1;
+    Static.colors_max     = 1;
     Static.brightness_min = 0;
-    Static.brightness = 100;
+    Static.brightness     = 100;
     Static.brightness_max = 100;
     modes.push_back(Static);
 
@@ -44,18 +80,15 @@ RGBController_NVIDIAIlluminationV1::RGBController_NVIDIAIlluminationV1(NVIDIAIll
     SetupZones();
 
     LOG_DEBUG("Retrieving stored color...");
-    nvidia_illumination->getColor();
-    for(unsigned int i = 0; i < nvidia_illumination->zone_params.numIllumZonesControl; i++)
+    for(unsigned int i = 0; i < zones.size(); i++)
     {
-        zones[i].colors[0] = ToRGBColor(nvidia_illumination->zone_params.zones[i].data.rgb.data.manualRGB.rgbParams.colorR,
-        nvidia_illumination->zone_params.zones[i].data.rgb.data.manualRGB.rgbParams.colorG,
-        nvidia_illumination->zone_params.zones[i].data.rgb.data.manualRGB.rgbParams.colorB);
+        zones[i].colors[0] = controller->getZoneColor(i);
     }
 }
 
 RGBController_NVIDIAIlluminationV1::~RGBController_NVIDIAIlluminationV1()
 {
-    delete nvidia_illumination;
+    delete controller;
 }
 
 void RGBController_NVIDIAIlluminationV1::UpdateSingleLED(int)
@@ -70,11 +103,11 @@ void RGBController_NVIDIAIlluminationV1::SetupZones()
     | populate available zones accordingly.                                      |
     \*--------------------------------------------------------------------------*/
     LOG_DEBUG("Calling get info...");
-    zoneTypes = nvidia_illumination->getInfo();
+    zoneTypes = controller->getInfo();
     LOG_DEBUG("Info retrieved!");
-    nvidia_illum_zone_names[NV_GPU_CLIENT_ILLUM_ZONE_TYPE_RGB] = "RGB";
-    nvidia_illum_zone_names[NV_GPU_CLIENT_ILLUM_ZONE_TYPE_RGBW] = "RGBW";
-    nvidia_illum_zone_names[NV_GPU_CLIENT_ILLUM_ZONE_TYPE_COLOR_FIXED] = "FIXED COLOR";
+    nvidia_illum_zone_names[NV_GPU_CLIENT_ILLUM_ZONE_TYPE_RGB]          = "RGB";
+    nvidia_illum_zone_names[NV_GPU_CLIENT_ILLUM_ZONE_TYPE_RGBW]         = "RGBW";
+    nvidia_illum_zone_names[NV_GPU_CLIENT_ILLUM_ZONE_TYPE_COLOR_FIXED]  = "FIXED COLOR";
     nvidia_illum_zone_names[NV_GPU_CLIENT_ILLUM_ZONE_TYPE_SINGLE_COLOR] = "SINGLE COLOR";
     LOG_DEBUG("Starting zone for loop...");
     for(uint8_t zone_idx = 0; zone_idx < zoneTypes.size(); zone_idx++)
@@ -103,18 +136,18 @@ void RGBController_NVIDIAIlluminationV1::DeviceUpdateLEDs()
     NVIDIAIllumination_Config nv_zone_config;
     for(uint8_t zone_idx = 0; zone_idx < zoneIndexMap.size(); zone_idx++)
     {
-        nv_zone_config.colors[0] = colors[zone_idx];
+        nv_zone_config.colors[0]  = colors[zone_idx];
         nv_zone_config.brightness = modes[active_mode].brightness;
-        nvidia_illumination->setZone(zone_idx, modes[active_mode].value, nv_zone_config);
+        controller->setZone(zone_idx, modes[active_mode].value, nv_zone_config);
     }
 }
 
 void RGBController_NVIDIAIlluminationV1::UpdateZoneLEDs(int zone)
 {
     NVIDIAIllumination_Config nv_zone_config;
-    nv_zone_config.colors[0] = colors[zone];
+    nv_zone_config.colors[0]  = colors[zone];
     nv_zone_config.brightness = modes[active_mode].brightness;
-    nvidia_illumination->setZone(zone, modes[active_mode].value, nv_zone_config);
+    controller->setZone(zone, modes[active_mode].value, nv_zone_config);
 }
 
 uint8_t RGBController_NVIDIAIlluminationV1::getModeIndex(uint8_t mode_value)
@@ -143,4 +176,3 @@ void RGBController_NVIDIAIlluminationV1::ResizeZone(int zone, int new_size)
 {
 
 }
-#endif
