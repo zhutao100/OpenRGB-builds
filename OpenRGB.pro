@@ -1179,8 +1179,7 @@ win32:INCLUDEPATH +=                                                            
     dependencies/openrazer-win32                                                                \
     wmi/                                                                                        \
     Controllers/AsusTUFLaptopController                                                         \
-    Controllers/NVIDIAIlluminationController/NVIDIAIlluminationV1Controller.h                   \
-    Controllers/NVIDIAIlluminationController/RGBController_NVIDIAIllumination.h                 \
+    Controllers/NVIDIAIlluminationController                                                    \
 
 win32:SOURCES +=                                                                                \
 #   dependencies/hidapi/hidapi.c                                                                \
@@ -1304,6 +1303,8 @@ win32:HEADERS +=                                                                
     AutoStart/AutoStart-Windows.h                                                               \
     Controllers/AsusTUFLaptopController/RGBController_AsusTUFLaptopWMI.h                        \
     Controllers/ENESMBusController/ENESMBusInterface/ENESMBusInterface_SpectrixS40G_Windows.h   \
+    Controllers/NVIDIAIlluminationController/NVIDIAIlluminationV1Controller.h                   \
+    Controllers/NVIDIAIlluminationController/RGBController_NVIDIAIllumination.h                 \
     Controllers/OpenRazerController/RGBController_OpenRazerWindows.h                            \
 
 win32:contains(QMAKE_TARGET.arch, x86_64) {

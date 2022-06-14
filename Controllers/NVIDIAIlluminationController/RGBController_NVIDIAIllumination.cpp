@@ -3,6 +3,7 @@
 |                                              |
 |  Generic RGB Interface for OpenRGB direct    |
 |  NVIDIA Illumination controller NVIDIA GPUs. |
+|  Note that this works for Windows only.      |
 |                                              |
 |  Carter Miller (GingerRunner) 1/4/2022       |
 \*--------------------------------------------*/
