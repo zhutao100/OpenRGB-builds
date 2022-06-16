@@ -13,6 +13,7 @@
 
 #include <atomic>
 #include <thread>
+#include <chrono>
 #include <condition_variable>
 #include <mutex>
 
@@ -22,6 +23,8 @@ typedef unsigned int    u32;
 typedef int             s32;
 
 #ifdef _WIN32
+// NvAPI lib for nvAPI direct calls
+#include <nvapi.h>
 
 //Data for SMBus Messages
 #define I2C_SMBUS_BLOCK_MAX     32
@@ -71,6 +74,7 @@ union i2c_smbus_data
 #define I2C_SMBUS_I2C_BLOCK_DATA    8
 
 
+
 class i2c_smbus_interface
 {
 public:
@@ -110,6 +114,9 @@ public:
 
     virtual s32 i2c_smbus_xfer(u8 addr, char read_write, u8 command, int size, i2c_smbus_data* data) = 0;
     virtual s32 i2c_xfer(u8 addr, char read_write, int* size, u8* data) = 0;
+    #ifdef _WIN32
+    virtual s32 nvapi_xfer(char nvapi_call, NV_GPU_CLIENT_ILLUM_ZONE_CONTROL_PARAMS* zone_control_struct) = 0;
+    #endif
 
 private:
     std::thread *           i2c_smbus_thread;

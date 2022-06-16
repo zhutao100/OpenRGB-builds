@@ -1179,6 +1179,7 @@ win32:INCLUDEPATH +=                                                            
     dependencies/openrazer-win32                                                                \
     wmi/                                                                                        \
     Controllers/AsusTUFLaptopController                                                         \
+    Controllers/NVIDIAIlluminationController                                                    \
 
 win32:SOURCES +=                                                                                \
 #   dependencies/hidapi/hidapi.c                                                                \
@@ -1281,6 +1282,9 @@ win32:SOURCES +=                                                                
     Controllers/AsusTUFLaptopController/RGBController_AsusTUFLaptopWMI.cpp                      \
     Controllers/ENESMBusController/XPGSpectrixS40GDetect_Windows.cpp                            \
     Controllers/ENESMBusController/ENESMBusInterface/ENESMBusInterface_SpectrixS40G_Windows.cpp \
+    Controllers/NVIDIAIlluminationController/NVIDIAIlluminationV1Controller.cpp                 \
+    Controllers/NVIDIAIlluminationController/NVIDIAIlluminationControllerDetect.cpp             \
+    Controllers/NVIDIAIlluminationController/RGBController_NVIDIAIllumination.cpp               \
     Controllers/OpenRazerController/OpenRazerWindowsDetect.cpp                                  \
     Controllers/OpenRazerController/RGBController_OpenRazerWindows.cpp                          \
 
@@ -1299,6 +1303,8 @@ win32:HEADERS +=                                                                
     AutoStart/AutoStart-Windows.h                                                               \
     Controllers/AsusTUFLaptopController/RGBController_AsusTUFLaptopWMI.h                        \
     Controllers/ENESMBusController/ENESMBusInterface/ENESMBusInterface_SpectrixS40G_Windows.h   \
+    Controllers/NVIDIAIlluminationController/NVIDIAIlluminationV1Controller.h                   \
+    Controllers/NVIDIAIlluminationController/RGBController_NVIDIAIllumination.h                 \
     Controllers/OpenRazerController/RGBController_OpenRazerWindows.h                            \
 
 win32:contains(QMAKE_TARGET.arch, x86_64) {

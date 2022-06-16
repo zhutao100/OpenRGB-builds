@@ -159,6 +159,29 @@ s32 i2c_smbus_nvapi::i2c_xfer(u8 addr, char read_write, int* size, u8* data)
     return(ret);
 }
 
+#ifdef _WIN32
+s32 i2c_smbus_nvapi::nvapi_xfer(char nvapi_call, NV_GPU_CLIENT_ILLUM_ZONE_CONTROL_PARAMS* zone_control_struct)
+{
+    NV_STATUS ret = -1;
+
+    if(nvapi_call == NVAPI_ZONE_SET_CONTROL)
+    {
+        ret = NvAPI_GPU_ClientIllumZonesSetControl(handle, zone_control_struct);
+    }
+    else if(nvapi_call == NVAPI_ZONE_GET_CONTROL)
+    {
+        ret = NvAPI_GPU_ClientIllumZonesGetControl(handle, zone_control_struct);
+    }
+    /*----------------------------------------------------------------------------------*\
+    | Based off experimentation, the NvAPI doesn't like to be spammed calls              |
+    | or else it just ignores them, this applies to both get/set control (GingerRunner)  |
+    \*----------------------------------------------------------------------------------*/
+    std::this_thread::sleep_for(std::chrono::milliseconds(NVAPI_CONTROL_BUFFER_TIME_MS));
+
+    return(ret);
+}
+#endif
+
 #include "Detector.h"
 
 bool i2c_smbus_nvapi_detect()
